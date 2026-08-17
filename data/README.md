@@ -16,15 +16,15 @@ plus the two experiments reported in Cepeda et al. (2009).
 
 ## Files
 
-- `cepeda2009_figure5.csv` — extracted data in long format.
+- `cepeda2009_figure5.csv` — extracted data, one row per plotted point.
 
 ## Data dictionary (`cepeda2009_figure5.csv`)
 
-| Column     | Type    | Description |
-|------------|---------|-------------|
-| `point`    | integer | Identifier for a plotted data point (one study/condition), numbered 1–40 in order of increasing test delay. Each point contributes two rows (one per variable). |
-| `variable` | string  | Which quantity the row records: `test_delay_days` = retention interval between the final study session and the final test, in days; `optimal_gap_days` = spacing gap (interstudy interval) between learning sessions that produced the best final-test performance, in days. |
-| `value`    | numeric | The value of `variable`, in days, digitized from the figure and rounded to three significant figures. |
+| Column             | Type    | Description |
+|--------------------|---------|-------------|
+| `point`            | integer | Identifier for a plotted data point (one study/condition), numbered 1–40 in order of increasing test delay. |
+| `test_delay_days`  | numeric | Retention interval between the final study session and the final test, in days. Digitized from the figure and rounded to three significant figures. |
+| `optimal_gap_days` | numeric | Spacing gap (interstudy interval) between learning sessions that produced the best final-test performance, in days. Digitized from the figure and rounded to three significant figures. |
 
 ## Extraction method and precision
 
