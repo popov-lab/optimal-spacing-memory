@@ -9,7 +9,9 @@
   of Figure 2 in Mozer et al. (2009): the forgetting and spacing functions of
   Cepeda et al. (2009) Experiments 1, 2a, and 2b, and the spacing functions of
   the four retention-interval conditions of Cepeda et al. (2008).
-  Plotted by `src/plot_mozer2009_figure2.py` → `figures/mozer2009_fig2{a,b,c,d}.png`.
+  Plotted by `src/plot_mozer2009_figure2.py` → `figures/mozer2009_fig2{a,b,c,d}.png`
+  (linear x axis, as in the source figure) and `figures/mozer2009_fig2{a,b,c,d}_log.png`
+  (logarithmic x spacing; linear below ISI = 1 day so the massed condition stays on the axis).
 
 Both datasets were recovered directly from the embedded vector graphics of the
 Mozer et al. (2009) proceedings PDF — i.e., they are the exact plotted
