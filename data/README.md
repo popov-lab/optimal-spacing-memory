@@ -40,6 +40,8 @@ assignment is by composition (the coordinates are identical).
 | `point`            | integer | Data point identifier, 1–46, ordered by increasing test delay. |
 | `test_delay_days`  | numeric | Retention interval between the final study session and the final test, in days. |
 | `optimal_gap_days` | numeric | Gap (interstudy interval) between learning sessions that produced the best observed final-test performance, in days. |
+| `test_delay_readable`  | string | `test_delay_days` re-expressed as the nearest round value in seconds/minutes/hours/days, for readability (approximate; within the ±0.2% recovery noise for nearly all points). |
+| `optimal_gap_readable` | string | `optimal_gap_days` re-expressed the same way. |
 | `source`           | string  | Origin of the data point: the Cepeda et al. (2006) meta-analysis database, or the lab's later experiments (Cepeda et al., 2008; Cepeda et al., 2009). |
 
 ## Notes
