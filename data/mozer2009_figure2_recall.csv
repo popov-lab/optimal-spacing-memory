@@ -1,0 +1,63 @@
+panel,experiment,material,function,isi_days,ri_days,recall_pct
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,forgetting,0,,92.2
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,forgetting,1,,83.8
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,forgetting,2,,68.8
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,forgetting,4,,52.2
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,forgetting,7,,43.8
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,forgetting,14,,28.4
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,spacing,0,10,55
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,spacing,1,10,74
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,spacing,2,10,69
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,spacing,4,10,68
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,spacing,7,10,69
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,spacing,14,10,65
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,forgetting,0,,96
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,forgetting,1,,91
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,forgetting,7,,80
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,forgetting,28,,56
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,forgetting,84,,28
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,forgetting,168,,22
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,spacing,0,168,26
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,spacing,1,168,33
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,spacing,7,168,47
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,spacing,28,168,56
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,spacing,84,168,43
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,spacing,168,168,45
+c,"Cepeda et al. (2009), Experiment 2b",object names,forgetting,0,,93
+c,"Cepeda et al. (2009), Experiment 2b",object names,forgetting,1,,84
+c,"Cepeda et al. (2009), Experiment 2b",object names,forgetting,7,,56
+c,"Cepeda et al. (2009), Experiment 2b",object names,forgetting,28,,26
+c,"Cepeda et al. (2009), Experiment 2b",object names,forgetting,84,,9
+c,"Cepeda et al. (2009), Experiment 2b",object names,forgetting,168,,6
+c,"Cepeda et al. (2009), Experiment 2b",object names,spacing,0,168,8
+c,"Cepeda et al. (2009), Experiment 2b",object names,spacing,1,168,9
+c,"Cepeda et al. (2009), Experiment 2b",object names,spacing,7,168,14
+c,"Cepeda et al. (2009), Experiment 2b",object names,spacing,28,168,26
+c,"Cepeda et al. (2009), Experiment 2b",object names,spacing,84,168,19
+c,"Cepeda et al. (2009), Experiment 2b",object names,spacing,168,168,17
+d,Cepeda et al. (2008),trivia facts,spacing,0,7,81.7
+d,Cepeda et al. (2008),trivia facts,spacing,1,7,94.9
+d,Cepeda et al. (2008),trivia facts,spacing,2,7,93.8
+d,Cepeda et al. (2008),trivia facts,spacing,7,7,94
+d,Cepeda et al. (2008),trivia facts,spacing,21,7,90.6
+d,Cepeda et al. (2008),trivia facts,spacing,105,7,82.4
+d,Cepeda et al. (2008),trivia facts,spacing,0,35,50.3
+d,Cepeda et al. (2008),trivia facts,spacing,1,35,67.2
+d,Cepeda et al. (2008),trivia facts,spacing,4,35,74.9
+d,Cepeda et al. (2008),trivia facts,spacing,7,35,79.6
+d,Cepeda et al. (2008),trivia facts,spacing,11,35,76.2
+d,Cepeda et al. (2008),trivia facts,spacing,21,35,72.6
+d,Cepeda et al. (2008),trivia facts,spacing,105,35,61
+d,Cepeda et al. (2008),trivia facts,spacing,0,70,30.6
+d,Cepeda et al. (2008),trivia facts,spacing,1,70,42.6
+d,Cepeda et al. (2008),trivia facts,spacing,7,70,61.6
+d,Cepeda et al. (2008),trivia facts,spacing,14,70,53.7
+d,Cepeda et al. (2008),trivia facts,spacing,21,70,65.1
+d,Cepeda et al. (2008),trivia facts,spacing,105,70,43.5
+d,Cepeda et al. (2008),trivia facts,spacing,0,350,12.3
+d,Cepeda et al. (2008),trivia facts,spacing,1,350,19.6
+d,Cepeda et al. (2008),trivia facts,spacing,7,350,21
+d,Cepeda et al. (2008),trivia facts,spacing,21,350,24.6
+d,Cepeda et al. (2008),trivia facts,spacing,35,350,22.3
+d,Cepeda et al. (2008),trivia facts,spacing,70,350,22.6
+d,Cepeda et al. (2008),trivia facts,spacing,105,350,19.2
