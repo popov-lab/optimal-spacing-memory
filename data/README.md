@@ -26,22 +26,25 @@ The values were recovered directly from the embedded vector graphics of the
 Mozer et al. (2009) figure in the proceedings PDF — i.e., they are the exact
 plotted coordinates, not a raster digitization. All 46 circle markers were
 decomposed from the figure's drawing commands and calibrated against its
-log10 gridlines (calibration residuals < 0.001 decades); remaining uncertainty
-from PDF coordinate rounding is about ±0.2%. Recovered values fall on round
-experimental units (e.g., 5.787e-5 days = 5 s; 0.998 ≈ 1 day), confirming they
-reproduce the underlying data values. The `source` column attributes points to
-the meta-analysis or to the later experiments; among coincident points the
-assignment is by composition (the coordinates are identical).
+log10 gridlines (calibration residuals < 0.001 decades), leaving only PDF
+coordinate-rounding noise of about ±0.2%. The recovered coordinates fall on
+round experimental units (5 s, 90 s, 1 day, 168 days, ...), so the round
+values are the underlying data; the numeric columns give their exact
+conversion to days, with the rendering noise removed. The single value that
+does not correspond to a round unit (the 32.2 s test delay of point 9) is
+kept as recovered. The `source` column attributes points to the meta-analysis
+or to the later experiments; among coincident points the assignment is by
+composition (the coordinates are identical).
 
 ## Data dictionary
 
 | Column             | Type    | Description |
 |--------------------|---------|-------------|
 | `point`            | integer | Data point identifier, 1–46, ordered by increasing test delay. |
-| `test_delay_days`  | numeric | Retention interval between the final study session and the final test, in days. |
-| `optimal_gap_days` | numeric | Gap (interstudy interval) between learning sessions that produced the best observed final-test performance, in days. |
-| `test_delay_readable`  | string | `test_delay_days` re-expressed as the nearest round value in seconds/minutes/hours/days, for readability (approximate; within the ±0.2% recovery noise for nearly all points). |
-| `optimal_gap_readable` | string | `optimal_gap_days` re-expressed the same way. |
+| `test_delay_days`  | numeric | Retention interval between the final study session and the final test, in days — the exact day conversion of `test_delay_readable`. |
+| `optimal_gap_days` | numeric | Gap (interstudy interval) between learning sessions that produced the best observed final-test performance, in days — the exact day conversion of `optimal_gap_readable`. |
+| `test_delay_readable`  | string | The same value in natural units (seconds/minutes/hours/days). |
+| `optimal_gap_readable` | string | The same value in natural units. |
 | `source`           | string  | Origin of the data point: the Cepeda et al. (2006) meta-analysis database, or the lab's later experiments (Cepeda et al., 2008; Cepeda et al., 2009). |
 
 ## Notes
