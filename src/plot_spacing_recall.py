@@ -1,17 +1,16 @@
-"""Reproduce panels a-d of Figure 2 in Mozer et al. (2009) — empirical data only,
-without the model fits. Panels a-c: forgetting function (open blue squares) and
-spacing function (filled olive circles) for Cepeda et al. (2009) Experiments 1,
-2a, and 2b. Panel d: spacing functions of Cepeda et al. (2008) for the four
-retention intervals.
+"""Plot the recall data of Cepeda et al. (2008, 2009). Panels a-c: forgetting
+and spacing functions of Cepeda et al. (2009) Experiments 1, 2a, and 2b, read
+from Figures 3 and 4 of that paper. Panel d: spacing functions of
+Cepeda et al. (2008) for the four retention intervals.
 
-Each panel is produced twice: with a linear x axis (as in the source figure)
+Each panel is produced twice: with a linear x axis (as in the source figures)
 and with logarithmic x spacing. Because the massed condition (ISI = 0) has no
 place on a log axis, the log versions use a symlog axis: linear below 1 day,
 logarithmic above.
 
-Usage: python src/plot_mozer2009_figure2.py
-Reads  data/mozer2009_figure2_recall.csv,
-writes figures/mozer2009_fig2{a,b,c,d}.png and figures/mozer2009_fig2{a,b,c,d}_log.png
+Usage: python src/plot_spacing_recall.py
+Reads  data/cepeda_spacing_recall.csv,
+writes figures/spacing_recall_{a,b,c,d}.png and figures/spacing_recall_{a,b,c,d}_log.png
 """
 
 import csv
@@ -22,7 +21,7 @@ import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parent.parent
 
-rows = list(csv.DictReader(open(ROOT / "data" / "mozer2009_figure2_recall.csv")))
+rows = list(csv.DictReader(open(ROOT / "data" / "cepeda_spacing_recall.csv")))
 for r in rows:
     r["isi_days"] = float(r["isi_days"])
     r["recall_pct"] = float(r["recall_pct"])
@@ -86,7 +85,7 @@ for p, cfg in panels.items():
             ax.spines[side].set_visible(False)
         fig.tight_layout()
         suffix = "_log" if scale == "log" else ""
-        out = ROOT / "figures" / f"mozer2009_fig2{p}{suffix}.png"
+        out = ROOT / "figures" / f"spacing_recall_{p}{suffix}.png"
         fig.savefig(out, dpi=300)
         plt.close(fig)
         print("wrote", out)
