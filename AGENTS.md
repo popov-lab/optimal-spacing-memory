@@ -48,8 +48,9 @@ to rediscover.
 
 ## Documentation and verification
 
-- In Markdown, write inline math as `$ ... $` and display math as
-  `$$ ... $$`. Do not change Markdown equations to `\(...\)` or `\[...\]`.
+- In Markdown, wrap inline math in single dollar signs (for example, `$x$`)
+  and put display math between double-dollar delimiter lines. Do not use
+  backslash-parenthesis or backslash-bracket math delimiters in Markdown.
   Native LaTeX files such as `notes.tex` keep normal LaTeX conventions.
 - The repository has no pinned Python environment. The full test and CSV
   pipeline requires NumPy and SciPy; use `python3` on systems without a

@@ -44,18 +44,18 @@ is shown.
 | Model | Agreement | Material difference |
 |---|---|---|
 | GPE | Core odds equation agrees. | Released parameter vector differs slightly from printed Table 1. |
-| ACT-R | Uses \(\sum r_j^{-d}\) and a positive output scale. | Confirms that Table 1's negative scale is a sign error. Earlier ages for \(N>2\) are approximated analytically rather than represented exactly. |
-| P&A | Implements presentation-specific decay. | Scale is stored as \(e^B\), but the environmental fit treats scaled strength directly as probability rather than converting odds. Its prototype-history code does not faithfully evaluate all prior components for the newest occurrence. |
-| PPE | Equations A3-A4 and the \(N=1\) special case agree. | Earlier occurrences for \(N>2\) are spread over an undocumented prototype ending near the 1,000-text boundary. |
-| MCM | Confirms simultaneous trace updates, \(K=100\), and the Equation 7 odds transform. | Truncates negative presentation increments with `max(0, ...)`, omitted from Equation A6. |
+| ACT-R | Uses $\sum r_j^{-d}$ and a positive output scale. | Confirms that Table 1's negative scale is a sign error. Earlier ages for $N>2$ are approximated analytically rather than represented exactly. |
+| P&A | Implements presentation-specific decay. | Scale is stored as $e^B$, but the environmental fit treats scaled strength directly as probability rather than converting odds. Its prototype-history code does not faithfully evaluate all prior components for the newest occurrence. |
+| PPE | Equations A3-A4 and the $N=1$ special case agree. | Earlier occurrences for $N>2$ are spread over an undocumented prototype ending near the 1,000-text boundary. |
+| MCM | Confirms simultaneous trace updates, $K=100$, and the Equation 7 odds transform. | Truncates negative presentation increments with `max(0, ...)`, omitted from Equation A6. |
 | AMPE | Confirms harmonic mean plus one, inclusive range, and the closed-form odds. | Confirms a singleton range of 1 and adjacent-pair range of 2, contradicting the prose equation of range with positional lag; its environmental fitter also imposes an undocumented lower bound greater than 1 on every parameter. |
 | A&M | Confirms Gamma desirability, exponential item decay distribution, persistent item parameters, and inverse revival-interval parameterization. | Treats `desirability * retention` directly as probability, not odds; uses a nonstandard per-step revival probability; the exponential and power scripts implement different initial-history conventions. |
 
 Published Equation A8 also has a dummy-index error in the MCM weight
-denominator: it must sum \(\xi^j\), as the code does, rather than repeat
-\(\xi^i\). The following sentence says \(\omega<1\) makes weights decrease;
-the relevant condition is \(\xi<1\). The released fitter enforces \(\xi<1\),
-not \(\omega<1\).
+denominator: it must sum $\xi^j$, as the code does, rather than repeat
+$\xi^i$. The following sentence says $\omega<1$ makes weights decrease;
+the relevant condition is $\xi<1$. The released fitter enforces $\xi<1$,
+not $\omega<1$.
 
 ## Parameters stored in `modelParams.mat`
 
@@ -64,14 +64,14 @@ from a nearby optimization or saved analysis state.
 
 | Model | Released values, in code order |
 |---|---|
-| GPE | \(c=.58161261, d=.61681564, A=.02081011\) |
-| ACT-R | \(d=.79718902, \kappa=.04010094\) |
-| P&A | \(c=.45391362, a=.75811324, \kappa=.05296011\) |
-| PPE | \(x=8.6986, c=.6178, b=.5358, m=.1862, A=.0180\) |
-| MCM | \(\mu=.0316, \nu=1.1112, \omega=.7041, \xi=.9784, A=.0288\) |
-| AMPE | \(a=214.107907, b=1401.134954, t_P=15.174529, g_P=1564.979129\) |
-| Exponential A&M | \(k_\pi=.1637, \theta_\pi=.1390, \mu_d=.0346, \mu_R=333\) |
-| Power A&M | \(k_\pi=.1986, \theta_\pi=.4820, \mu_d=4.0757, \mu_R=800\) |
+| GPE | $c=.58161261, d=.61681564, A=.02081011$ |
+| ACT-R | $d=.79718902, \kappa=.04010094$ |
+| P&A | $c=.45391362, a=.75811324, \kappa=.05296011$ |
+| PPE | $x=8.6986, c=.6178, b=.5358, m=.1862, A=.0180$ |
+| MCM | $\mu=.0316, \nu=1.1112, \omega=.7041, \xi=.9784, A=.0288$ |
+| AMPE | $a=214.107907, b=1401.134954, t_P=15.174529, g_P=1564.979129$ |
+| Exponential A&M | $k_\pi=.1637, \theta_\pi=.1390, \mu_d=.0346, \mu_R=333$ |
+| Power A&M | $k_\pi=.1986, \theta_\pi=.4820, \mu_d=4.0757, \mu_R=800$ |
 
 ## Critical discrepancies and errors
 
@@ -80,11 +80,11 @@ from a nearby optimization or saved analysis state.
 The paper defines desirability and the deterministic outputs as odds. GPE,
 ACT-R, PPE, MCM, and AMPE generally apply
 
-\[
+$$
 p=\frac{O}{1+O}.
-\]
+$$
 
-The released P&A fit instead uses \(\kappa\sum r_j^{-d_j}\) directly as a
+The released P&A fit instead uses $\kappa\sum r_j^{-d_j}$ directly as a
 probability. Both A&M scripts similarly generate occurrences using
 
 ```matlab
@@ -102,18 +102,18 @@ the released scoring rule only as an explicit comparison mode.
 The fitted 333 and 800 are mean inter-revival intervals, not Poisson rates;
 the MATLAB code takes their reciprocals. It then uses
 
-\[
+$$
 p_{\mathrm{revival}}=\lambda e^{-\lambda},
-\]
+$$
 
 the probability of exactly one Poisson event, rather than the probability of
 at least one event,
 
-\[
+$$
 1-e^{-\lambda}.
-\]
+$$
 
-The difference is tiny for \(\lambda=1/333\) or \(1/800\), but the implemented
+The difference is tiny for $\lambda=1/333$ or $1/800$, but the implemented
 law is not the one described.
 
 ### 3. The two A&M variants do not share one simulation engine
@@ -131,7 +131,7 @@ the final run. `expFit` reuses decay/revival templates across batches, whereas
 contains an unexplained rule forbidding every 2,999th candidate revival. Exact
 simulation reproduction is therefore impossible from the release.
 
-The reported output multiplier \(A\) is not passed into either simulator.
+The reported output multiplier $A$ is not passed into either simulator.
 Instead, the scripts rescale raw conditional prediction values directly so
 their mean *log* value (equivalently, geometric mean) matches the observations.
 This is different from scaling odds and from the paper's statement about
@@ -141,18 +141,18 @@ matching mean probability.
 
 The released AMPE uses
 
-\[
+$$
 G=(\text{oldest age}-\text{newest age})+1.
-\]
+$$
 
 This resolves the examples in Figure 4 but contradicts prose saying range is
-the sum of consecutive lags and equals spacing for \(N=2\). The Python code
+the sum of consecutive lags and equals spacing for $N=2$. The Python code
 uses the released inclusive definition and exposes an explicit `range_value`
 argument for alternative behavioral encodings.
 
 ### 5. Prototype histories are part of the fitted model
 
-For \(N>2\), the environmental fitting functions construct earlier occurrences
+For $N>2$, the environmental fitting functions construct earlier occurrences
 at approximately even intervals between the second-most-recent occurrence and
 the old edge of the 1,000-text window. Exact rounding differs by model (`ceil`
 in P&A; noninteger ages in PPE and AMPE). Thus the reported fits are not merely
@@ -194,7 +194,7 @@ results.
 
 Recomputing the paper's statistics from the cached surfaces gives:
 
-| Model/cache | RMSE | \(r^2\) | compared cells |
+| Model/cache | RMSE | $r^2$ | compared cells |
 |---|---:|---:|---:|
 | GPE | .581342 | .886138 | 513 |
 | ACT-R | .824587 | .784265 | 513 |
@@ -257,46 +257,46 @@ helper is not the published equation.
 ## Paper-level issues not repaired silently
 
 - SAM is not specified or released.
-- AMPE has no \(N=0\) rule.
+- AMPE has no $N=0$ rule.
 - The 3-1-2 behavioral pseudo-exposure schedule is incomplete.
 - Mixed-design currency and range use different clocks.
 - Parameter bounds and optimizer settings are not fully reported.
-- Table 2's mean P&A \(r^2=.4\) is evidently \(.94\).
+- Table 2's mean P&A $r^2=.4$ is evidently $.94$.
 - Five occurrences create four consecutive lags, not five.
 - A 3,000-event series ordinarily supplies 2,000 history-plus-target windows,
   not the reported 1,999.
-- Table 1 assigns \(g_P\) to Equation 12; it is defined in Equation 11.
+- Table 1 assigns $g_P$ to Equation 12; it is defined in Equation 11.
 - The text cross-references Equation 14 as AMPE odds; Equation 14 is the recall
   mapping, while AMPE odds follow from Equations 9-13.
 - Equation A8 uses the wrong denominator dummy index, and the following MCM
-  constraint names \(\omega\) where decreasing weights require \(\xi<1\).
+  constraint names $\omega$ where decreasing weights require $\xi<1$.
 
 ## False monotonic-practice claim
 
 The paper says adding practice within a fixed range can never lower AMPE odds,
-regardless of parameterization. Holding range fixed keeps \(M\) and \(d\)
+regardless of parameterization. Holding range fixed keeps $M$ and $d$
 fixed, but adding an older internal occurrence can raise harmonic-mean
-currency enough to dominate the multiplier \(N\).
+currency enough to dominate the multiplier $N$.
 
-For \(t_P=1\), ages \(\{1,100\}\), and \(d=10\):
+For $t_P=1$, ages $\{1,100\}$, and $d=10$:
 
-\[
+$$
 T_{\mathrm{old}}=1+\operatorname{HM}(1,100,1)=2.4925.
-\]
+$$
 
 Add an internal occurrence at age 99 without changing the endpoints:
 
-\[
+$$
 T_{\mathrm{new}}=1+\operatorname{HM}(1,99,100,1)=2.9801.
-\]
+$$
 
 Then
 
-\[
+$$
 \frac{O_{\mathrm{new}}}{O_{\mathrm{old}}}
 =\frac{3}{2}\left(\frac{2.9801}{2.4925}\right)^{-10}
 \approx .251.
-\]
+$$
 
 Added practice lowers predicted odds by about 75%. The claim may hold in a
 restricted fitted region, but not for all positive parameterizations.

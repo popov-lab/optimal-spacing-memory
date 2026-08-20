@@ -73,7 +73,7 @@ Required modes:
 - `release_compat`: reproduce `Appendix.m`, including the hard-coded first
   Rumelhart row and equal averaging of the two Pavlik–Anderson schedules;
 - `paper_intended`: additionally apply the stated Rumelhart guessing rule,
-  \(p_\mathrm{correct}=1/3+(2/3)p_\mathrm{recall}\);
+  $p_\mathrm{correct}=1/3+(2/3)p_\mathrm{recall}$;
 - `robust_fit`: use deterministic multistart optimization with declared bounds
   and seeds.
 
@@ -155,7 +155,7 @@ Implement the released simulation semantics exactly, including:
 
 - direct desirability-times-retention Bernoulli draws;
 - raw, potentially above-one target scores retained for averaging;
-- \(p_\mathrm{revival}=\lambda e^{-\lambda}\);
+- $p_\mathrm{revival}=\lambda e^{-\lambda}$;
 - variant-specific initialization and boundary behavior;
 - the released prefilter and 2,000-window convention;
 - count-at-least-1,000 simulation masks;
@@ -171,8 +171,8 @@ agreement with uncertainty, not bit identity.
 
 Hold the simulation engine constant and vary only the declared model feature:
 
-- odds converted with \(p=O/(1+O)\);
-- revival probability \(1-e^{-\lambda}\);
+- odds converted with $p=O/(1+O)$;
+- revival probability $1-e^{-\lambda}$;
 - one documented discrete-time observation convention;
 - the same initialization, window boundaries, conditioning, and output scale
   for exponential and power decay.
