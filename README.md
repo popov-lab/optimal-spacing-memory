@@ -1,31 +1,20 @@
 # Optimal spacing and memory
 
-This repository studies how the spacing between learning episodes affects
-later memory. It contains the working manuscript and simulations for a simple
-spacing model, data recovered from the Cepeda et al. literature, and an audited
-replication layer for the environmental and behavioral memory models in
-Anderson et al. (2023).
+This repository studies how the spacing between learning episodes affects later memory. It contains the working manuscript and simulations for a simple spacing model, data recovered from the Cepeda et al. literature, and an audited replication layer for the environmental and behavioral memory models in Anderson et al. (2023).
 
 ## Repository map
 
-- `notes.tex` is the working manuscript on learning, forgetting, and optimal
-  study gaps.
-- `data/` contains the small, tracked datasets recovered from published
-  spacing-effect figures.
-- `src/` contains plotting code, the original R simulation, and independent
-  Python implementations of the Anderson et al. models.
-- `external/anderson_2023/` is an immutable copy of the authors' MATLAB
-  release, with provenance and SHA-256 checksums.
-- `scripts/prepare_anderson_2023_data.py` converts that release into validated,
-  relational CSV tables.
-- `docs/` contains the Anderson et al. model reference, release audit, data
-  dictionary, CSV schemas, and replication plan.
+- `notes.tex` is the working manuscript on learning, forgetting, and optimal study gaps.
+- `data/` contains the small, tracked datasets recovered from published spacing-effect figures.
+- `src/` contains plotting code, the original R simulation, and independent Python implementations of the Anderson et al. models.
+- `external/anderson_2023/` is an immutable copy of the authors' MATLAB release, with provenance and SHA-256 checksums.
+- `scripts/prepare_anderson_2023_data.py` converts that release into validated, relational CSV tables.
+- `docs/` contains the Anderson et al. model reference, release audit, data dictionary, CSV schemas, and replication plan.
 - `tests/` contains model, conversion-pipeline, and MATLAB v7.3 reader tests.
 
 ## Clone and retrieve Git LFS files
 
-Install [Git LFS](https://git-lfs.com/) before cloning. A normal clone will
-then retrieve the 16 `.mat` and `.docx` objects (about 357 MB) automatically:
+Install [Git LFS](https://git-lfs.com/) before cloning. A normal clone will then retrieve the 16 `.mat` and `.docx` objects (about 357 MB) automatically:
 
 ```bash
 git lfs install
@@ -35,9 +24,7 @@ git lfs pull
 git lfs fsck
 ```
 
-If the repository was cloned before Git LFS was installed, the affected files
-will contain small text pointers instead of MATLAB or Word data. From the
-repository root, recover them with:
+If the repository was cloned before Git LFS was installed, the affected files will contain small text pointers instead of MATLAB or Word data. From the repository root, recover them with:
 
 ```bash
 git lfs install
@@ -46,14 +33,11 @@ git lfs checkout
 git lfs fsck
 ```
 
-Do this before diagnosing a `.mat` parsing error or a suspiciously small file
-under `external/anderson_2023/matlab/`.
+Do this before diagnosing a `.mat` parsing error or a suspiciously small file under `external/anderson_2023/matlab/`.
 
 ## Python verification
 
-The repository does not yet pin a Python environment. The test and conversion
-commands require NumPy and SciPy; the custom MATLAB v7.3 reader deliberately
-does not require MATLAB or `h5py`.
+The repository does not yet pin a Python environment. The test and conversion commands require NumPy and SciPy; the custom MATLAB v7.3 reader deliberately does not require MATLAB or `h5py`.
 
 Run the fast verification suite from the repository root:
 
@@ -65,9 +49,7 @@ git lfs fsck
 
 ## Generated Anderson et al. CSV data
 
-Only `data/derived/anderson_2023/manifest.csv` is tracked. The 30 generated CSV
-tables are deterministic but intentionally ignored because a complete export
-contains 51,599,837 rows and occupies 2,458,559,538 bytes.
+Only `data/derived/anderson_2023/manifest.csv` is tracked. The 30 generated CSV tables are deterministic but intentionally ignored because a complete export contains 51,599,837 rows and occupies 2,458,559,538 bytes.
 
 Rebuild or validate the complete snapshot with:
 
@@ -76,23 +58,10 @@ python3 scripts/prepare_anderson_2023_data.py
 python3 scripts/prepare_anderson_2023_data.py --validate-only
 ```
 
-For development, the exporter also provides `--skip-corpus`,
-`--skip-exact-history`, and `--skip-appendix-c`. Use those flags with a new,
-empty output directory; the exporter rejects mixed partial and complete
-snapshots. See [the data reference](docs/anderson_2023_data_reference.md) and
-[CSV schema](docs/anderson_2023_csv_schema.md) before interpreting a table.
+For development, the exporter also provides `--skip-corpus`, `--skip-exact-history`, and `--skip-appendix-c`. Use those flags with a new, empty output directory; the exporter rejects mixed partial and complete snapshots. See [the data reference](docs/anderson_2023_data_reference.md) and [CSV schema](docs/anderson_2023_csv_schema.md) before interpreting a table.
 
 ## Anderson et al. replication notes
 
-The vendored MATLAB directory is a byte-for-byte source snapshot; fixes and
-adapters belong elsewhere. The independent implementation distinguishes
-`release_compat`, `paper_intended`, and `corrected_common_engine` semantics.
-These modes should not be conflated when comparing results.
+The vendored MATLAB directory is a byte-for-byte source snapshot; fixes and adapters belong elsewhere. The independent implementation distinguishes `release_compat`, `paper_intended`, and `corrected_common_engine` semantics. These modes should not be conflated when comparing results.
 
-The release does not include participant-level behavioral outcomes, the code
-that produced `Combined.mat/counts225`, or random seeds and search history for
-the stochastic A&M fits. Consequently, some targets support exact artifact
-replay while others require uncertainty-aware replication. The boundaries and
-acceptance criteria are detailed in the
-[release audit](docs/anderson_2023_release_audit.md) and
-[replication plan](docs/anderson_2023_replication_plan.md).
+The release does not include participant-level behavioral outcomes, the code that produced `Combined.mat/counts225`, or random seeds and search history for the stochastic A&M fits. Consequently, some targets support exact artifact replay while others require uncertainty-aware replication. The boundaries and acceptance criteria are detailed in the [release audit](docs/anderson_2023_release_audit.md) and [replication plan](docs/anderson_2023_replication_plan.md).
