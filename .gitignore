@@ -12,3 +12,8 @@ notes.tex.blg
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Large deterministic derivatives are rebuilt from the immutable release.
+# Only their manifest is tracked.
+data/derived/anderson_2023/*.csv
+!data/derived/anderson_2023/manifest.csv
