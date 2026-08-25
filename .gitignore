@@ -8,3 +8,7 @@ notes.run.xml
 notes.synctex.gz
 notes.tex.bbl
 notes.tex.blg
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
