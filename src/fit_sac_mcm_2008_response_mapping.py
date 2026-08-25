@@ -29,7 +29,6 @@ N = 100
 ZERO_GAP_DAYS = 0.00256
 PLOT_XLIM = (-5.25, 110.25)
 PLOT_XTICKS = [0, 7, 14, 21, 35, 70, 105]
-CACHE_BUST_TAG = "layoutfix_20260825"
 
 
 def read_data():
@@ -247,8 +246,8 @@ def plot_fit(rows, model_name, strength_fn, params, outstem):
         ncol=1,
     )
 
-    for suffix in (".svg", ".png"):
-        fig.savefig(outstem.with_suffix(suffix), dpi=180)
+
+    fig.savefig(outstem.with_suffix(".svg"), dpi=180)
     plt.close(fig)
 
 
@@ -293,21 +292,21 @@ def main():
         "single bounded gain at all study events",
         lambda a, b, p: mcm_strength(a, b, p["mu"], p["nu"], p["xi"], p["delta"]),
         mcm,
-        FIGURES / f"mcm_2008_logistic_linear_{CACHE_BUST_TAG}",
+        FIGURES / f"mcm_2008_logistic",
     )
     plot_fit(
         rows,
         "Cepeda et al. (2008): SAC + logistic response\n" + r"$f(t)=(1+t)^{-d}$",
         lambda a, b, p: sac_strength(a, b, p["delta"], p["d"], None),
         sac_fixed,
-        FIGURES / f"sac_2008_logistic_fixed_scale_linear_{CACHE_BUST_TAG}",
+        FIGURES / f"sac_2008_logistic_fixed_scale",
     )
     plot_fit(
         rows,
         "Cepeda et al. (2008): SAC + logistic response\n" + r"$f(t)=(1+t/\tau)^{-d}$",
         lambda a, b, p: sac_strength(a, b, p["delta"], p["d"], p["tau"]),
         sac_tau,
-        FIGURES / f"sac_2008_logistic_tau_linear_{CACHE_BUST_TAG}",
+        FIGURES / f"sac_2008_logistic_tau",
     )
 
 
