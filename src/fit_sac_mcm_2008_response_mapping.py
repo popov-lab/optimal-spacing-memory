@@ -158,18 +158,20 @@ def fit_sac(model_isi, ri, observed, with_tau, starts=96, seed=20260826):
     hi = np.asarray(hi)
 
     def unpack(z):
-        k = 0
-        p = {"delta": float(expit(z[k]))}
-        k += 1
-        p["d"] = float(np.exp(z[k]))
-        k += 1
-        p["tau"] = float(np.exp(z[k])) if with_tau else None
         if with_tau:
-            k += 1
-        p["theta"] = float(z[k])
-        k += 1
-        p["sigma"] = float(np.exp(z[k]))
-        return p
+            logit_delta, log_d, log_tau, theta, log_sigma = z
+            tau = float(np.exp(log_tau))
+        else:
+            logit_delta, log_d, theta, log_sigma = z
+            tau = None
+
+        return {
+            "delta": float(expit(logit_delta)),
+            "d": float(np.exp(log_d)),
+            "tau": tau,
+            "theta": float(theta),
+            "sigma": float(np.exp(log_sigma)),
+        }
 
     def residual(z):
         p = unpack(z)
