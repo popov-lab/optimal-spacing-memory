@@ -8,10 +8,12 @@ notes.run.xml
 notes.synctex.gz
 notes.tex.bbl
 notes.tex.blg
+.venv/
 __pycache__/
 *.py[cod]
+.pytest_cache/
 
-# Deterministic, potentially multi-gigabyte derivatives. Rebuild from the
-# immutable release; choose a project-wide large-data policy before versioning.
+# Large deterministic derivatives are rebuilt from the immutable release.
+# Only their manifest is tracked.
 data/derived/anderson_2023/*.csv
 !data/derived/anderson_2023/manifest.csv

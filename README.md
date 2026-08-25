@@ -6,11 +6,39 @@ This repository studies how the spacing between learning episodes affects later 
 
 - `notes.tex` is the working manuscript on learning, forgetting, and optimal study gaps.
 - `data/` contains the small, tracked datasets recovered from published spacing-effect figures.
-- `src/` contains plotting code, the original R simulation, and independent Python implementations of the Anderson et al. models.
+- `src/` contains plotting and fitting code, the original R simulation, and independent Python implementations of the Anderson et al. models.
+- `results/` contains fitted parameters, predictions, and modeling notes.
 - `external/anderson_2023/` is an immutable copy of the authors' MATLAB release, with provenance and SHA-256 checksums.
 - `scripts/prepare_anderson_2023_data.py` converts that release into validated, relational CSV tables.
 - `docs/` contains the Anderson et al. model reference, focused implementation notes, data dictionary, CSV schemas, and minimal replication plan.
 - `tests/` contains model, conversion-pipeline, and MATLAB v7.3 reader tests.
+
+## Python environment
+
+The scripts require Python 3.10 or newer. Create and activate a repository-local
+virtual environment, then install the runtime dependencies:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Run scripts from the repository root. For example:
+
+```bash
+python src/fit_sac_mcm_2008_response_mapping.py
+python src/fit_mcm_cepeda2008.py --starts 8
+python src/fit_mcm_cepeda2009.py --starts 8
+python src/plot_mcm_replication.py
+python src/plot_optimal_gaps.py
+python src/plot_spacing_recall.py
+```
+
+The fitting scripts write CSV files to `results/`; the plotting scripts write
+figures to `figures/`. Some fit commands use many optimization starts by
+default and can take several minutes.
 
 ## Clone and retrieve Git LFS files
 
@@ -37,8 +65,6 @@ Do this before diagnosing a `.mat` parsing error or a suspiciously small file un
 
 ## Python verification
 
-The repository does not yet pin a Python environment. The test and conversion commands require NumPy and SciPy; the custom MATLAB v7.3 reader deliberately does not require MATLAB or `h5py`.
-
 Run the fast verification suite from the repository root:
 
 ```bash
@@ -46,6 +72,8 @@ python3 -m unittest discover -s tests -v
 python3 scripts/sanity_check_anderson_2023.py
 git lfs fsck
 ```
+
+The custom MATLAB v7.3 reader deliberately does not require MATLAB or `h5py`.
 
 ## Generated Anderson et al. CSV data
 
