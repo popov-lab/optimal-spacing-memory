@@ -24,14 +24,16 @@ from anderson_2023_models import (  # noqa: E402
     ampe_odds,
     ampe_recall_probability,
     anderson_milson_conditional_predictions,
+    anderson_ppe_odds,
     gpe_odds,
     inclusive_range,
     mcm_odds,
     mcm_state,
     odds_to_probability,
-    odds_to_reaction_time,
     pavlik_anderson_component_decays,
+    ppe_activation,
     ppe_components,
+    ppe_odds,
     released_geometric_mean_scale,
     scale_anderson_milson_predictions,
     simulate_anderson_milson,
@@ -53,15 +55,15 @@ class TestHelpers(unittest.TestCase):
 class TestClosedFormModels(unittest.TestCase):
     def test_gpe_and_actr_exact_values(self) -> None:
         gpe = GPEParameters(
-            odds_scale=0.5, frequency_exponent=1.0, decay=2.0
+            alpha=0.5, frequency_exponent=1.0, decay=2.0
         )
-        actr = ACTRParameters(odds_scale=0.1, decay=1.0)
+        actr = ACTRParameters(alpha=0.1, decay=1.0)
         self.assertAlmostEqual(gpe_odds([10, 2], gpe), 0.25)
         self.assertAlmostEqual(actr_odds([10, 2], actr), 0.06)
 
     def test_pavlik_anderson_decay_recursion(self) -> None:
         params = PavlikAndersonParameters(
-            odds_scale=0.1,
+            alpha=0.1,
             minimum_decay=0.5,
             activation_sensitivity=0.2,
         )
@@ -75,7 +77,7 @@ class TestClosedFormModels(unittest.TestCase):
 
     def test_ppe_singleton_and_weighted_age(self) -> None:
         params = PPEParameters(
-            odds_scale=0.02,
+            alpha=0.02,
             frequency_exponent=0.6,
             recency_weight=1.0,
             minimum_decay=0.5,
@@ -87,10 +89,14 @@ class TestClosedFormModels(unittest.TestCase):
         repeated = ppe_components([4, 2], params)
         self.assertAlmostEqual(repeated.effective_age, 8 / 3)
         self.assertAlmostEqual(repeated.decay, 0.5 + 0.2 / np.log(2 + np.e))
+        activation = 2**0.6 * repeated.effective_age ** (-repeated.decay)
+        self.assertAlmostEqual(ppe_activation([4, 2], params), activation)
+        self.assertAlmostEqual(anderson_ppe_odds([4, 2], params), 0.02 * activation)
+        self.assertAlmostEqual(ppe_odds([4, 2], params), 0.02 * np.exp(activation))
 
     def test_mcm_state_and_probability(self) -> None:
         params = MCMParameters(
-            odds_scale=0.1,
+            alpha=0.1,
             time_scale=1.0,
             time_ratio=2.0,
             total_weight=0.5,
@@ -114,7 +120,7 @@ class TestClosedFormModels(unittest.TestCase):
 
     def test_ampe_components_and_recall(self) -> None:
         environmental = AMPEParameters(
-            desirability_scale=214,
+            alpha=214,
             decay_scale=1401,
             prior_age=15.18,
             prior_range=1565,
@@ -150,7 +156,7 @@ class TestClosedFormModels(unittest.TestCase):
 
     def test_ampe_spacing_crossover_with_released_fit(self) -> None:
         params = AMPEParameters(
-            desirability_scale=214.1079,
+            alpha=214.1079,
             decay_scale=1401.1350,
             prior_age=15.1745,
             prior_range=1564.9791,
@@ -162,15 +168,11 @@ class TestClosedFormModels(unittest.TestCase):
         self.assertGreater(probability(1, 1), probability(500, 1))
         self.assertGreater(probability(500, 500), probability(1, 500))
 
-    def test_reaction_time_mapping(self) -> None:
-        self.assertAlmostEqual(odds_to_reaction_time(4, 200, 80, 0.5), 240)
-
-
 class TestAndersonMilsonSimulation(unittest.TestCase):
     def test_small_simulation_is_valid_and_revival_boosts_probability(self) -> None:
         params = AndersonMilsonParameters(
             desirability_shape=0.199,
-            desirability_scale=0.482,
+            gamma_scale=0.482,
             mean_decay=4.076,
             mean_revival_interval=50,
         )
@@ -190,7 +192,7 @@ class TestAndersonMilsonSimulation(unittest.TestCase):
     def test_released_probability_mapping_and_posthoc_scale(self) -> None:
         params = AndersonMilsonParameters(
             desirability_shape=0.5,
-            desirability_scale=0.2,
+            gamma_scale=0.2,
             mean_decay=1.0,
             mean_revival_interval=20,
         )

@@ -1117,12 +1117,12 @@ def export_behavioral_data(source: Path, output: Path) -> list[WrittenTable]:
 def export_model_parameters(source: Path, output: Path) -> WrittenTable:
     data = load_classic(source / "modelParams.mat")
     mappings = {
-        "paramsGPE": ("gpe", ["frequency_exponent", "decay", "odds_scale"]),
-        "paramsACTR": ("actr", ["decay", "odds_scale"]),
-        "paramsPA": ("pavlik_anderson", ["activation_sensitivity", "minimum_decay", "released_strength_scale"]),
-        "paramsPPE": ("ppe", ["recency_weight_exponent", "frequency_exponent", "minimum_decay", "spacing_sensitivity", "odds_scale"]),
-        "paramsMCM": ("mcm", ["time_constant_scale", "time_constant_ratio", "total_trace_weight", "trace_weight_ratio", "odds_scale"]),
-        "paramsAMPE": ("ampe", ["desirability_scale", "stability_scale", "time_prior", "range_prior"]),
+        "paramsGPE": ("gpe", ["frequency_exponent", "decay", "alpha"]),
+        "paramsACTR": ("actr", ["decay", "alpha"]),
+        "paramsPA": ("pavlik_anderson", ["activation_sensitivity", "minimum_decay", "alpha"]),
+        "paramsPPE": ("ppe", ["recency_weight_exponent", "frequency_exponent", "minimum_decay", "spacing_sensitivity", "alpha"]),
+        "paramsMCM": ("mcm", ["time_constant_scale", "time_constant_ratio", "total_trace_weight", "trace_weight_ratio", "alpha"]),
+        "paramsAMPE": ("ampe", ["alpha", "decay_scale", "time_prior", "range_prior"]),
         "paramsEXP": ("anderson_milson_exponential", ["gamma_shape", "gamma_scale", "mean_decay", "mean_revival_interval"]),
         "paramsPOWER": ("anderson_milson_power", ["gamma_shape", "gamma_scale", "mean_decay", "mean_revival_interval"]),
     }
@@ -1132,7 +1132,7 @@ def export_model_parameters(source: Path, output: Path) -> WrittenTable:
         ["model_id", "parameter_index", "parameter_name", "value", "status", "source_variable"],
         table_id="environmental_model_parameters",
         source_files="modelParams.mat",
-        notes="Released vectors correspond to cached fits; deterministic models replay exactly, whereas stochastic A&M lacks released seeds/search state",
+        notes="Released cached-fit vectors named in MATLAB parameter order; A&M output multipliers are not stored in modelParams.mat",
     )
     with writer:
         for variable, (model, names) in mappings.items():

@@ -119,7 +119,7 @@ def inclusive_range(ages: ArrayLike) -> float:
 
 @dataclass(frozen=True)
 class GPEParameters:
-    odds_scale: float
+    alpha: float
     frequency_exponent: float
     decay: float
 
@@ -128,15 +128,15 @@ def gpe_odds(ages: ArrayLike, params: GPEParameters) -> float:
     """General Performance Equation (paper Equation 3)."""
 
     values = _ages_oldest_to_newest(ages)
-    scale = _positive(params.odds_scale, "odds_scale")
+    alpha = _positive(params.alpha, "alpha")
     decay = _nonnegative(params.decay, "decay")
     frequency_exponent = _finite(params.frequency_exponent, "frequency_exponent")
-    return float(scale * values.size**frequency_exponent * values[-1] ** (-decay))
+    return float(alpha * values.size**frequency_exponent * values[-1] ** (-decay))
 
 
 @dataclass(frozen=True)
 class ACTRParameters:
-    odds_scale: float
+    alpha: float
     decay: float
 
 
@@ -144,14 +144,14 @@ def actr_odds(ages: ArrayLike, params: ACTRParameters) -> float:
     """ACT-R base-level odds (paper Equation 4)."""
 
     values = _ages_oldest_to_newest(ages)
-    scale = _positive(params.odds_scale, "odds_scale")
+    alpha = _positive(params.alpha, "alpha")
     decay = _nonnegative(params.decay, "decay")
-    return float(scale * np.sum(values ** (-decay)))
+    return float(alpha * np.sum(values ** (-decay)))
 
 
 @dataclass(frozen=True)
 class PavlikAndersonParameters:
-    odds_scale: float
+    alpha: float
     minimum_decay: float
     activation_sensitivity: float
 
@@ -184,14 +184,14 @@ def pavlik_anderson_odds(
     """Pavlik-Anderson odds (paper Equation 5 with Equations A1-A2)."""
 
     values = _ages_oldest_to_newest(ages)
-    scale = _positive(params.odds_scale, "odds_scale")
+    alpha = _positive(params.alpha, "alpha")
     decays = pavlik_anderson_component_decays(values, params)
-    return float(scale * np.sum(values ** (-decays)))
+    return float(alpha * np.sum(values ** (-decays)))
 
 
 @dataclass(frozen=True)
 class PPEParameters:
-    odds_scale: float
+    alpha: float
     frequency_exponent: float
     recency_weight: float
     minimum_decay: float
@@ -230,23 +230,43 @@ def ppe_components(ages: ArrayLike, params: PPEParameters) -> PPEComponents:
     return PPEComponents(effective_age=effective_age, decay=decay)
 
 
-def ppe_odds(ages: ArrayLike, params: PPEParameters) -> float:
-    """Predictive Performance Equation odds (paper Equation 6)."""
+def ppe_activation(ages: ArrayLike, params: PPEParameters) -> float:
+    """Return the PPE memory activation defined by Walsh et al. (2018)."""
 
     values = _ages_oldest_to_newest(ages)
-    scale = _positive(params.odds_scale, "odds_scale")
     frequency_exponent = _finite(params.frequency_exponent, "frequency_exponent")
     components = ppe_components(values, params)
     return float(
-        scale
-        * values.size**frequency_exponent
+        values.size**frequency_exponent
         * components.effective_age ** (-components.decay)
     )
 
 
+def ppe_odds(ages: ArrayLike, params: PPEParameters) -> float:
+    """PPE odds after mapping activation through unit-scale logistic noise.
+
+    Walsh et al. define PPE's power-product output as activation. With a
+    unit-scale logistic response mapping, odds are ``alpha * exp(activation)``.
+    Anderson et al. (2023) instead treat the activation itself as odds; use
+    :func:`anderson_ppe_odds` to reproduce that formulation.
+    """
+
+    alpha = _positive(params.alpha, "alpha")
+    activation = ppe_activation(ages, params)
+    log_odds = np.log(alpha) + activation
+    return float(np.exp(np.clip(log_odds, -745.0, 709.0)))
+
+
+def anderson_ppe_odds(ages: ArrayLike, params: PPEParameters) -> float:
+    """Anderson et al. Equation 6 and ``PPEFit.m``: ``alpha * activation``."""
+
+    alpha = _positive(params.alpha, "alpha")
+    return float(alpha * ppe_activation(ages, params))
+
+
 @dataclass(frozen=True)
 class MCMParameters:
-    odds_scale: float
+    alpha: float
     time_scale: float
     time_ratio: float
     total_weight: float
@@ -311,14 +331,14 @@ def mcm_state(ages: ArrayLike, params: MCMParameters) -> MCMState:
 def mcm_odds(ages: ArrayLike, params: MCMParameters) -> float:
     """Environmental MCM odds (paper Equation 7)."""
 
-    scale = _positive(params.odds_scale, "odds_scale")
+    alpha = _positive(params.alpha, "alpha")
     strength = min(mcm_state(ages, params).weighted_strength, 0.999999)
-    return float(scale * strength / (1.0 - strength))
+    return float(alpha * strength / (1.0 - strength))
 
 
 @dataclass(frozen=True)
 class AMPEParameters:
-    desirability_scale: float
+    alpha: float
     decay_scale: float
     prior_age: float
     prior_range: float
@@ -346,7 +366,7 @@ def ampe_components(
     values = _ages_oldest_to_newest(ages)
     if np.any(values[:-1] <= values[1:]):
         raise ValueError("environmental AMPE requires distinct occurrence times")
-    desirability_scale = _positive(params.desirability_scale, "desirability_scale")
+    alpha = _positive(params.alpha, "alpha")
     decay_scale = _positive(params.decay_scale, "decay_scale")
     prior_age = _positive(params.prior_age, "prior_age")
     prior_range = _positive(params.prior_range, "prior_range")
@@ -359,7 +379,7 @@ def ampe_components(
     currency = harmonic_mean(np.append(values, prior_age)) + 1.0
     effective_interval = (observed_range + prior_range) / 2.0
     decay = decay_scale / effective_interval
-    desirability = desirability_scale * values.size / effective_interval
+    desirability = alpha * values.size / effective_interval
     log_odds = np.log(desirability) - decay * np.log(currency)
     return AMPEComponents(
         frequency=int(values.size),
@@ -435,28 +455,10 @@ def ampe_recall_probability(
     return float(logistic((activation - threshold) / noise_scale))
 
 
-def odds_to_reaction_time(
-    odds: float | np.ndarray,
-    intercept: float,
-    scale: float,
-    exponent: float,
-) -> float | np.ndarray:
-    """Paper Equation 16: ``RT = intercept + scale * odds**(-exponent)``."""
-
-    values = np.asarray(odds, dtype=float)
-    if np.any(values <= 0) or np.any(~np.isfinite(values)):
-        raise ValueError("reaction-time odds must be finite and positive")
-    intercept = _finite(intercept, "intercept")
-    scale = _nonnegative(scale, "scale")
-    exponent = _nonnegative(exponent, "exponent")
-    result = intercept + scale * values ** (-exponent)
-    return float(result) if result.ndim == 0 else result
-
-
 @dataclass(frozen=True)
 class AndersonMilsonParameters:
     desirability_shape: float
-    desirability_scale: float
+    gamma_scale: float
     mean_decay: float
     mean_revival_interval: float
 
@@ -489,7 +491,7 @@ class AndersonMilsonConditionalPredictions:
 
 def scale_anderson_milson_predictions(
     conditional_predictions: float | np.ndarray,
-    output_scale: float,
+    alpha: float,
     *,
     semantics: OutputScaleSemantics = "odds",
 ) -> float | np.ndarray:
@@ -502,7 +504,7 @@ def scale_anderson_milson_predictions(
     """
 
     values = np.asarray(conditional_predictions, dtype=float)
-    scale = _positive(output_scale, "output_scale")
+    alpha = _positive(alpha, "alpha")
     if semantics == "odds":
         if np.any(~np.isfinite(values)) or np.any((values < 0) | (values > 1)):
             raise ValueError("odds scaling requires values within [0, 1]")
@@ -512,13 +514,13 @@ def scale_anderson_milson_predictions(
             out=np.full_like(values, np.inf),
             where=values < 1.0,
         )
-        result = odds_to_probability(scale * odds)
+        result = odds_to_probability(alpha * odds)
     elif semantics == "released_probability":
         if np.any(~np.isfinite(values)) or np.any(values < 0):
             raise ValueError(
                 "released prediction values must be finite and nonnegative"
             )
-        result = scale * values
+        result = alpha * values
     else:
         raise ValueError("semantics must be 'odds' or 'released_probability'")
     return float(result) if np.ndim(result) == 0 else result
@@ -597,9 +599,7 @@ def simulate_anderson_milson(
         )
 
     shape = _positive(params.desirability_shape, "desirability_shape")
-    desirability_scale = _positive(
-        params.desirability_scale, "desirability_scale"
-    )
+    gamma_scale = _positive(params.gamma_scale, "gamma_scale")
     mean_decay = _positive(params.mean_decay, "mean_decay")
     mean_revival = _positive(
         params.mean_revival_interval, "mean_revival_interval"
@@ -608,7 +608,7 @@ def simulate_anderson_milson(
         rng if isinstance(rng, np.random.Generator) else np.random.default_rng(rng)
     )
 
-    initial_desirability = generator.gamma(shape, desirability_scale, int(n_items))
+    initial_desirability = generator.gamma(shape, gamma_scale, int(n_items))
     decays = generator.exponential(mean_decay, int(n_items))
     revival_probability = -np.expm1(-1.0 / mean_revival)
     elapsed = generator.geometric(revival_probability, int(n_items)).astype(float)

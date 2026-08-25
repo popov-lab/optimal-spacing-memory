@@ -54,6 +54,19 @@ class TestModelingTables(unittest.TestCase):
             }
             for table_id, rows in expected_rows.items():
                 self.assertEqual(int(manifest[table_id]["rows"]), rows)
+            with (output / "environmental_model_parameters.csv").open(
+                encoding="utf-8", newline=""
+            ) as handle:
+                parameters = list(csv.DictReader(handle))
+            alpha_models = {
+                row["model_id"]
+                for row in parameters
+                if row["parameter_name"] == "alpha"
+            }
+            self.assertEqual(
+                alpha_models,
+                {"gpe", "actr", "pavlik_anderson", "ppe", "mcm", "ampe"},
+            )
             self.assertEqual(
                 main(["--output-dir", str(output), "--validate-only"]),
                 0,

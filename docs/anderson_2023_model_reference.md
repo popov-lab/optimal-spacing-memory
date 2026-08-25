@@ -1,181 +1,161 @@
 # Anderson et al. (2023) model reference
 
-Implementation-complete transcription of the models compared in:
+This page states the environmental models in one notation and distinguishes the
+equations we intend to use from behavior specific to the released MATLAB code.
+The source comparison is in the [implementation notes](anderson_2023_implementation_notes.md).
 
-> Anderson, J. R., Betts, S., Byrne, M. D., Schooler, L. J., & Stanley, C. (2023). The environmental basis of memory. *Psychological Review, 130*, 1137-1166. https://doi.org/10.1037/rev0000409
+## Common notation
 
-This reference states the models in common notation. It excludes the paper's binning, optimization, and corpus preprocessing because those are not part of the models. Discrepancies between the equations and the authors' MATLAB release are recorded in [the release audit](anderson_2023_release_audit.md).
-
-## Common notation and output
-
-Let occurrence times and the prediction time satisfy
+For a history of $n$ occurrences, set the most recent occurrence to the origin:
 
 $$
-u_1 < \cdots < u_N < t.
+t_1 < t_2 < \cdots < t_n = 0.
 $$
 
-Define
+The prediction time $t>0$ is therefore the time since the most recent
+occurrence. When a model needs the lag between consecutive occurrences, use
 
 $$
-r_j=t-u_j>0
+\Delta t_k=t_{k+1}-t_k.
 $$
 
-as the age of occurrence $j$ at prediction, and
+The odds after $n$ occurrences are $O_n(t)$ and the corresponding probability is
 
 $$
-\ell_j=u_{j+1}-u_j>0
+p_n(t)=\frac{O_n(t)}{1+O_n(t)}.
 $$
 
-as the lag between consecutive occurrences. The most recent age is
+The same symbol, $\alpha>0$, is used for every model's multiplicative odds
+scale. It is not an activation. If activation $B$ is mapped to recall by
 
 $$
-R=\min_j r_j.
+p=\frac{1}{1+\exp[(\mu-B)/\sigma]},
 $$
 
-For the environmental data, time is discrete text position: an occurrence in the immediately preceding text has age 1, and occurrences in adjacent texts have lag 1. Multiple appearances within one text were collapsed, so ages are distinct.
-
-All deterministic environmental models first produce odds $O$, then
+then at unit logistic scale, $\sigma=1$,
 
 $$
-p=\frac{O}{1+O}.
+O=\exp(-\mu)\exp(B)=\alpha\exp(B).
 $$
 
-The implementation exposes the odds directly and uses one shared `odds_to_probability` function. All scales and times must be positive. Decay and spacing-sensitivity parameters are nonnegative unless stated otherwise. The released human-AMPE schedules are the one exception: they sometimes encode a just-presented event with age zero, as specified in Section 8.
+Equivalently, with intercept $\eta=-\mu$, $\alpha=e^\eta$. When $\sigma\ne1$,
+retain $\mu$ and $\sigma$ in the response mapping rather than folding them into
+the common unit-scale $\alpha$.
+
+The Python functions currently receive the equivalent positive ages
+$(t-t_1,\ldots,t-t_n)$. This is an input representation only; the equations
+below use the normalized event times throughout.
+
+For the environmental data, time is discrete text position. An occurrence in
+the immediately preceding text has age $t-t_n=1$. Multiple appearances within
+one text were collapsed.
 
 ## 1. General Performance Equation (GPE)
 
-Paper Equation 3:
-
 $$
-O=A N^c R^{-d}.
+O_n(t)=\alpha n^c t^{-d}.
 $$
 
-| Quantity | Meaning |
-|---|---|
-| $A>0$ | odds scale |
-| $c$ | frequency exponent |
-| $d\ge0$ | recency-decay exponent |
-| $N$ | number of occurrences |
-| $R$ | age of the most recent occurrence |
+Here $c$ controls the effect of frequency and $d\ge0$ controls forgetting.
+Anderson et al.'s Table 1 reports $\alpha=.021$, $c=.575$, and $d=.608$.
 
-Printed Table 1 fit: $A=.021, c=.575, d=.608$.
-
-Code: `gpe_odds(ages, params)`.
+Code: `gpe_odds`.
 
 ## 2. ACT-R base-level model
 
-Paper Equation 4:
-
 $$
-O=\kappa\sum_{j=1}^{N}r_j^{-d}.
+O_n(t)=\alpha\sum_{j=1}^{n}(t-t_j)^{-d}.
 $$
 
-Here $d\ge0$ is a common component-decay exponent and $\kappa>0$ is an odds scale. The paper calls the latter $b$, but that symbol is overloaded in later models.
+Every occurrence contributes a component with the same decay exponent $d$.
+Table 1 prints a negative odds multiplier, but the released parameter file and
+`ACTRFit.m` use a positive value near $.040$; the implementation therefore uses
+$\alpha>0$.
 
-Printed Table 1 gives $d=.792$ and $b=-.040$. A negative multiplier would give negative odds. The released code resolves this as a typographical sign error: it uses a positive scale near $.040$.
-
-Code: `actr_odds(ages, params)`.
+Code: `actr_odds`.
 
 ## 3. Pavlik and Anderson (P&A)
 
-Each occurrence creates a component whose decay exponent depends on the strength of all earlier components at that occurrence.
-
-First occurrence (Equation A1):
+Each occurrence has its own decay exponent. Let the first be
 
 $$
 d_1=a.
 $$
 
-For occurrence $n\ge2$, compute prior strength at $u_n$:
+For occurrence $k\ge2$, its exponent depends on activation from all earlier
+components at that occurrence:
 
 $$
-H_n=\sum_{j=1}^{n-1}(u_n-u_j)^{-d_j},
+B_{k-1}(t_k)
+=\sum_{j=1}^{k-1}(t_k-t_j)^{-d_j},
 $$
 
-then assign the new component (Equation A2):
-
 $$
-d_n=a+cH_n.
+d_k=a+cB_{k-1}(t_k).
 $$
 
-At prediction (Equation 5):
+Prediction then uses
 
 $$
-O=\kappa\sum_{j=1}^{N}r_j^{-d_j}.
+O_n(t)=\alpha\sum_{j=1}^{n}(t-t_j)^{-d_j}.
 $$
 
-| Parameter | Meaning |
-|---|---|
-| $a\ge0$ | minimum component decay |
-| $c\ge0$ | increase in a new component's decay per unit current strength |
-| $\kappa>0$ | odds scale |
-
-Printed Table 1 gives $a=.758, c=.444, B=-2.94$. The only coherent reading of $B$ is an additive log-odds intercept, so
-
-$$
-\kappa=e^B=e^{-2.94}\approx .0529.
-$$
-
-These P&A estimates were fitted with the release's direct-probability output and its defective $N>2$ prototype recursion. They are reference values, not fitted estimates for the corrected equation-level implementation below.
+The released parameter file stores the positive multiplier
+$\alpha=.05296011$; this is approximately $e^{-2.94}$, the value printed as
+$B=-2.94$ in Table 1. The general implementation evaluates the full sum above.
+The released environmental prototype has a narrower calculation for the newest
+component, documented in the implementation notes.
 
 Code: `pavlik_anderson_component_decays` and `pavlik_anderson_odds`.
 
 ## 4. Predictive Performance Equation (PPE)
 
-Define recency weights and effective elapsed time (Equation A3):
+Define normalized recency weights and effective elapsed time:
 
 $$
-w_j=\frac{r_j^{-x}}{\sum_{k=1}^{N}r_k^{-x}},
-\qquad
-T_{\mathrm{eff}}=\sum_{j=1}^{N}w_jr_j.
+w_j(t)=\frac{(t-t_j)^{-x}}
+{\sum_{k=1}^{n}(t-t_k)^{-x}},
 $$
 
-Equivalently,
-
 $$
-T_{\mathrm{eff}}
-=\frac{\sum_j r_j^{1-x}}{\sum_j r_j^{-x}}.
+T_n(t)=\sum_{j=1}^{n}w_j(t)(t-t_j).
 $$
 
-At $x=1$, this is the harmonic mean; as $x\to\infty$, it approaches the most recent age.
-
-For $N>1$, spacing determines the decay exponent (Equation A4):
+For $n>1$, spacing determines the decay exponent:
 
 $$
-d_{\mathrm{PPE}}
-=b+\frac{m}{N-1}\sum_{j=1}^{N-1}
-\frac{1}{\log(\ell_j+e)}.
+d_n=b+\frac{m}{n-1}\sum_{k=1}^{n-1}
+\frac{1}{\log(\Delta t_k+e)}.
 $$
 
-For $N=1$, the necessary special case is $d_{\mathrm{PPE}}=b$.
-
-The odds equation is Equation 6:
-
-$$
-O=A N^c T_{\mathrm{eff}}^{-d_{\mathrm{PPE}}}.
-$$
-
-| Parameter | Meaning |
-|---|---|
-| $A>0$ | odds scale |
-| $c$ | frequency exponent |
-| $x$ | recency-weighting exponent |
-| $b\ge0$ | minimum decay |
-| $m\ge0$ | spacing sensitivity |
-
-Printed Table 1 fit:
+For $n=1$, set $d_1=b$. Walsh et al. define the power product as memory
+activation:
 
 $$
-x=8.699,\quad c=.612,\quad b=.549,\quad m=.186,\quad A=.018.
+B_n(t)=n^c T_n(t)^{-d_n}.
 $$
 
-Code: `ppe_components` and `ppe_odds`.
+With unit-scale logistic noise, the corrected odds are therefore
 
-## 5. Multiscale Context Model (MCM), environmental variant
+$$
+O_n(t)=\alpha\exp\{B_n(t)\}.
+$$
 
-This is Anderson et al.'s simplified environmental adaptation of Mozer et al. (2009), not the original full recall model. It uses $K=100$ traces. Trace index $i$ is unrelated to occurrence index $j$.
+Anderson et al. instead label activation as odds in Equation 6 and implement
 
-Time constants and trace weights (Equations A7-A8):
+$$
+O_n^{\mathrm{Anderson}}(t)=\alpha B_n(t).
+$$
+
+These are kept separate in code: `ppe_activation`, corrected `ppe_odds`, and
+`anderson_ppe_odds` for the Anderson equation and MATLAB comparison. Anderson
+et al.'s fitted $\alpha=.018$ belongs to their mapping and must not be treated
+as a fitted scale for the corrected odds equation.
+
+## 5. Multiscale Context Model (MCM)
+
+This is Anderson et al.'s environmental adaptation of Mozer et al. (2009). It
+uses $K=100$ traces with
 
 $$
 \tau_i=\mu\nu^i,
@@ -184,252 +164,146 @@ $$
 \qquad i=1,\ldots,K.
 $$
 
-Thus $\sum_i\gamma_i=\omega$. Intended constraints are
+Thus $\sum_i\gamma_i=\omega$. Between two events separated by $\Delta t$,
 
 $$
-\mu>0,\quad \nu>1,\quad 0<\omega<1,\quad 0<\xi<1.
+x_i\leftarrow x_i\exp(-\Delta t/\tau_i).
 $$
 
-All trace strengths are initialized to one at the first occurrence. Between events (Equation A5):
+At a later occurrence, the release computes every increment from the same
+pre-update state:
 
 $$
-x_i(t+\Delta t)=x_i(t)e^{-\Delta t/\tau_i}.
-$$
-
-At every later occurrence, calculate simultaneously from the pre-update state
-
-$$
-\bar x_i
-=\frac{\sum_{k=1}^{i}\gamma_kx_k}{\sum_{k=1}^{i}\gamma_k},
+\bar x_i=\frac{\sum_{k=1}^{i}\gamma_kx_k}
+{\sum_{k=1}^{i}\gamma_k},
 \qquad
 \Delta x_i=\max(0,1-\bar x_i),
-\qquad
+$$
+
+$$
 x_i\leftarrow x_i+\Delta x_i.
 $$
 
-The `max` is present in the released MATLAB but omitted from printed Equation A6. After decay to prediction, define
+After decay from $t_n=0$ to prediction time $t$, define
 
 $$
-q=\min\left(\sum_i\gamma_ix_i,.999999\right).
+q_n(t)=\min\left(\sum_i\gamma_ix_i(t),.999999\right),
 $$
 
-Equation 7 maps this recall-like strength to environmental odds:
+and
 
 $$
-O=A\frac{q}{1-q}.
+O_n(t)=\alpha\frac{q_n(t)}{1-q_n(t)}.
 $$
 
-Printed Table 1 fit:
-
-$$
-\mu=.032,\quad \nu=1.111,\quad \omega=.704,\quad \xi=.978,\quad A=.029.
-$$
+The `max` truncation is present in `MCMFit.m` but absent from printed Equation
+A6. Anderson et al.'s Table 1 reports $\mu=.032$, $\nu=1.111$,
+$\omega=.704$, $\xi=.978$, and $\alpha=.029$.
 
 Code: `mcm_state` and `mcm_odds`.
 
 ## 6. Anderson-Milson (A&M) environmental process
 
-For each item $i$, draw once
+For each item $i$, draw a persistent desirability $\pi_i$ from a Gamma
+distribution and a persistent decay $d_i$ from an exponential distribution.
+Revivals reset the item's latent elapsed time $u$.
+
+The two retention functions are
 
 $$
-\pi_i\sim\operatorname{Gamma}(k_\pi,\theta_\pi),
+r_{\exp}(u;d_i)=e^{-d_i u},
 \qquad
-d_i\sim\operatorname{Exponential}(\text{mean }\mu_d).
-$$
-
-The Gamma uses shape $k_\pi$ and scale $\theta_\pi$, so $E[\pi_i]=k_\pi\theta_\pi$. The item retains both $\pi_i$ and $d_i$ across revivals.
-
-Revivals follow a homogeneous Poisson process with mean interval $\mu_R$, equivalently rate $\lambda_R=1/\mu_R$. A revival resets latent elapsed time but is not caused by an observed occurrence. At discrete event boundaries the probability of at least one revival in the preceding unit interval is
-
-$$
-p_R=1-e^{-1/\mu_R}.
-$$
-
-Use age $u=1$ for the first sampled text after a revival. This removes the printed power law's singularity at zero while using one timing convention for both variants:
-
-$$
-r_{\exp}(u;d)=e^{-du},
-\qquad
-r_{\mathrm{pow}}(u;d)=u^{-d},
+r_{\mathrm{pow}}(u;d_i)=u^{-d_i},
 \qquad u=1,2,\ldots.
 $$
 
-The intended latent need odds and occurrence probability are
+The coherent latent odds and occurrence probability are
 
 $$
-O_i(u)=\pi_i r(u;d_i),
+Q_i(u)=\pi_i r(u;d_i),
 \qquad
-p_i(u)=\frac{O_i(u)}{1+O_i(u)},
+p_i(u)=\frac{Q_i(u)}{1+Q_i(u)}.
+$$
+
+For a supplied history summary $h$, prediction is the Monte Carlo conditional
+mean of $p_i(u)$ among simulated targets with that history. Only after this
+conditioning is the common output scale $\alpha$ applied to the conditional
+odds.
+
+The released MATLAB scripts instead compare a uniform draw directly with
+$Q_i(u)$ and average the raw $Q_i(u)$ values within history cells. The simulator
+therefore retains an explicit `released_probability` option for checking the
+release while using the odds mapping by default.
+
+The fitted output scales reported in Table 1 are $\alpha=.704$ for exponential
+decay and $\alpha=.724$ for power decay. They are post-hoc scales, not
+parameters of the latent generator.
+
+Code: `simulate_anderson_milson`,
+`anderson_milson_conditional_predictions`, and
+`scale_anderson_milson_predictions`.
+
+## 7. AMPE
+
+Include a prior age $t_P>0$ in the currency estimate:
+
+$$
+T_n(t)=\mathrm{HM}(t-t_1,\ldots,t-t_n,t_P)+1.
+$$
+
+The released environmental implementation uses the inclusive discrete range
+
+$$
+G_n=t_n-t_1+1=1-t_1.
+$$
+
+Define the effective interval and decay:
+
+$$
+M_n=\frac{G_n+g_P}{2},
 \qquad
-Y_{i,t}\sim\operatorname{Bernoulli}(p_i(t)).
+d_n=\frac{b}{M_n}.
 $$
 
-The Bernoulli and odds-conversion steps are required by the paper's interpretation but are not printed. The released code instead compares a uniform draw directly with $z_i=\pi_i r(u;d_i)$, which implicitly caps the Bernoulli probability at one, but it retains the raw, potentially above-one $z_i$ as the target prediction. The simulator supports both explicitly; `occurrence_mapping="odds"` is the coherent default and `"released_probability"` is the exact MATLAB scoring behavior.
-
-The model's prediction is not the unconditional $p_i(t)$. For a supplied history summary $h$, it is the Monte Carlo conditional mean
+The odds are
 
 $$
-\widehat p(h)
-=\frac{1}{|C_h|}\sum_{(i,t)\in C_h}p_i(t),
-\qquad
-C_h=\{(i,t):H_{i,t}=h\}.
+O_n(t)=\alpha\frac{n}{M_n}T_n(t)^{-d_n}.
 $$
 
-The paper's exact cells use frequency plus the ages of the two most recent occurrences in the preceding 1,000 events; later binning is an analysis step, not part of the model. Code: `anderson_milson_conditional_predictions`.
+Anderson et al.'s Table 1 reports $\alpha=214$, $b=1401$,
+$t_P=15.18$, and $g_P=1565$. AMPE is undefined for $n=0$.
 
-In released mode the same operation averages raw $z_i(t)$, not bounded probabilities, so a conditional cell can in principle exceed one.
+Code: `inclusive_range`, `ampe_components`, and `ampe_odds`.
 
-Only after that conditional averaging is output scale $A$ applied. The paper says it scales odds,
+### Human-recall mapping
 
-$$
-\widehat p_A(h)
-=\frac{A\widehat p(h)/(1-\widehat p(h))}
-{1+A\widehat p(h)/(1-\widehat p(h))}.
-$$
-
-The MATLAB release instead multiplies its raw conditional cell value directly and chooses
+For human recall, remove the environmental scale from the activation:
 
 $$
-A_{\mathrm{release}}
-=\exp\!\left[
-\operatorname{mean}\log p_{\mathrm{observed}}
--\operatorname{mean}\log\widehat z
-\right].
+B_n(t)=\log n-\log M_n-\frac{b}{M_n}\log T_n(t).
 $$
 
-These alternatives are implemented by `scale_anderson_milson_predictions` and `released_geometric_mean_scale`. Output scale never changes which histories are generated.
-
-| Model | $k_\pi$ | $\theta_\pi$ | $\mu_d$ | $\mu_R$ | $A$ |
-|---|---:|---:|---:|---:|---:|
-| Exponential A&M | .164 | .139 | .035 | 333 | .704 |
-| Power A&M | .199 | .482 | 4.076 | 800 | .724 |
-
-The values of $A$ in this table are post-hoc released prediction scales, not generative parameters for the corrected odds-based simulator. Likewise, the other values were fitted under the released direct-probability generator and should be treated as audit/reference values when using the corrected mapping.
-
-The paper calls $\beta$ a revival *rate* but reports 333 and 800. The released code uses their reciprocals as per-event rates, confirming that the reported values are mean intervals.
-
-Code: `simulate_anderson_milson`. Its returned arrays include latent odds, probabilities, Bernoulli occurrences, revival indicators, elapsed times, and item parameters. This is the latent generator; the conditional function above provides the operational prediction stage.
-
-## 7. AMPE environmental model
-
-For an observed history with $N\ge1$, include one prior pseudo-age $t_P>0$ in the currency estimate (Equation 10):
+With threshold $\mu$ and logistic scale $\sigma$,
 
 $$
-T
-=\operatorname{HM}(r_1,\ldots,r_N,t_P)+1
-=\frac{N+1}{\sum_{j=1}^{N}1/r_j+1/t_P}+1.
+p_n(t)=\frac{1}{1+\exp[(\mu-B_n(t))/\sigma]}.
 $$
 
-The released implementation uses the inclusive range
+At $\sigma=1$, this gives $\alpha=e^{-\mu}=e^\eta$ with $\eta=-\mu$, as
+in the common mapping above. The released behavioral schedules sometimes use
+age zero; `ampe_recall_probability` preserves that released convention without
+changing the environmental time convention.
 
-$$
-G=\max_j r_j-\min_j r_j+1,
-$$
-
-so a singleton has $G=1$ and adjacent occurrences have $G=2$. Define the effective interval (Equation 11), inferred decay (Equation 12), and initial desirability (Equation 13):
-
-$$
-M=\frac{G+g_P}{2},
-\qquad
-d=\frac{b}{M},
-\qquad
-\pi=\frac{aN}{M}.
-$$
-
-Substitution into Equation 9 gives
-
-$$
-O=\frac{aN}{M}T^{-b/M}.
-$$
-
-For stable computation,
-
-$$
-\log O=\log a+\log N-\log M-\frac{b}{M}\log T.
-$$
-
-Parameters are $a,b,t_P,g_P>0$. Printed Table 1 fit:
-
-$$
-a=214,\quad b=1401,\quad t_P=15.18,\quad g_P=1565.
-$$
-
-AMPE is undefined for $N=0$; the paper supplies no unseen-item base rate.
-
-Code: `inclusive_range`, `ampe_components`, and `ampe_odds`. `ampe_components` accepts an explicit range because the behavioral applications sometimes use a different range calendar from the ages entering $T$.
-
-## 8. AMPE human-recall mapping
-
-Let $A_{\mathrm{mem}}=\log O$. With logistic activation noise of scale $s>0$ and retrieval threshold $\tau$, Equation 14 is
-
-$$
-P(\text{recall})
-=\frac{1}{1+\exp[(\tau-A_{\mathrm{mem}})/s]}.
-$$
-
-The desirability scale $a$ is absorbed into the threshold. Define
-
-$$
-\alpha
-=\log\left(\frac{NT^{-d}}{M}\right)
-=\log N-\log M-\frac{b}{M}\log T
-$$
-
-and $\eta=\tau-\log a$. Equation 15 becomes
-
-$$
-P(\text{recall})
-=\frac{1}{1+\exp[(\eta-\alpha)/s]}.
-$$
-
-The five fitted parameters per experiment are
-
-$$
-b>0,\quad t_P>0,\quad g_P>0,\quad s>0,\quad \eta\in\mathbb R.
-$$
-
-Code: `ampe_recall_probability`.
-
-Unlike the environmental window convention, the released behavioral schedules may assign age zero to a just-presented item and may repeat that zero. The behavioral implementation therefore accepts $r_j\ge0$. If any age is zero, MATLAB's harmonic mean is zero and Equation 10 gives $T=1$. Environmental AMPE continues to require positive, distinct text ages.
-
-Schedule adapters needed to reproduce individual behavioral datasets:
-
-- Single-day studies: each study or test opportunity is one event.
-- Between-day studies: the paper uses a 3-1-2 pseudo-exposure rule (first session = 3 observations, same-day repeat = 1, later-day repeat = 2), but does not fully specify pseudo-event placement or aging.
-- Mixed studies: one day is 500 age events, while range is the sum of within-day ranges and ignores intervening days.
-- Rumelhart's three-alternative task adds guessing:
-
-  $$
-  P(\text{correct})=P(\text{recall})+\frac{1-P(\text{recall})}{3}.
-  $$
-
-These dataset-specific encodings are not silently built into the core model.
-
-## 9. Reaction-time mapping
-
-Paper Equation 16 maps any positive model odds to latency:
-
-$$
-RT=I+S O^{-q},
-$$
-
-with $S,q\ge0$. Code: `odds_to_reaction_time`.
-
-## 10. SAM status
-
-Search of Associative Memory (SAM) appears only in the behavioral comparison, whose statistics are copied from Walsh et al. (2018). Anderson et al. provide no equations, parameters, initialization, output mapping, or simulation code for SAM, and their release contains no SAM implementation. It is therefore not implemented here. Substituting an arbitrary version of Raaijmakers's SAM would not be a faithful implementation of the model underlying Table 2.
-
-## Confirmatory checks only
+## Checks in this PR
 
 Run
 
 ```bash
-python -m unittest discover -s tests -v
-python scripts/sanity_check_anderson_2023.py
+python3 -m unittest discover -s tests -v
+python3 scripts/sanity_check_anderson_2023.py
 ```
 
-The sanity script performs no fitting and reads no author data. It checks only:
-
-1. finite probabilities and a recency decline for all six deterministic environmental models;
-2. AMPE's intended spacing crossover using the released environmental fit;
-3. valid sparse outputs and a post-revival boost in short simulations of both A&M decay variants.
+The unit tests include hand-checkable histories for the deterministic models,
+the corrected and Anderson PPE mappings, AMPE's spacing crossover, and small
+seeded A&M simulations. No reaction-time or SAM replication is in scope.

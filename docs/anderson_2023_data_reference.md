@@ -175,4 +175,4 @@ These are preserved rather than silently repaired:
 10. `future_count` in both range-history tables is a count in the observation window, not a binary probability.  `future_hit` is an explicit derived indicator.
 11. Figure 4's range-bin labels and its MATLAB bin edges disagree by one for several boundaries.
 12. `getNs.m` and `freqRange.m` omit the final logically valid 2,000-event window for every source.
-13. `fit4s.mat` is intentionally not treated as canonical data.  It is a saved exploratory four-parameter/alternative-currency fit whose active equation differs from the final AMPE model.  It remains available in the immutable vendor snapshot and is documented in the release audit.
+13. `fit4s.mat` is intentionally not treated as canonical data. It is a saved exploratory four-parameter/alternative-currency fit whose active equation differs from the final AMPE model and remains available in the immutable vendor snapshot.

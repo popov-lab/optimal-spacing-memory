@@ -27,6 +27,6 @@ Treat `matlab/` as an immutable vendor snapshot; put fixes and adapters elsewher
 - `scripts/matlab_v73_reader.py` streams the released MATLAB 7.3 Reddit data without requiring MATLAB or an HDF5 Python package.
 - `docs/anderson_2023_data_reference.md` documents every generated table.
 - `docs/anderson_2023_model_reference.md` transcribes the model equations.
-- `docs/anderson_2023_release_audit.md` compares the paper, this release, and the independent implementation.
+- `docs/anderson_2023_implementation_notes.md` records the paper-to-code differences that affect the independent implementation.
 
 The author release has no standalone license file. Retain its attribution and consult the source page or authors before redistributing it outside the research purposes for which it was shared.

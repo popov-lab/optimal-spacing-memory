@@ -41,18 +41,18 @@ MODELS = {
     "GPE": lambda ages: gpe_odds(
         ages,
         GPEParameters(
-            odds_scale=0.02081011,
+            alpha=0.02081011,
             frequency_exponent=0.58161261,
             decay=0.61681564,
         ),
     ),
     "ACT-R": lambda ages: actr_odds(
-        ages, ACTRParameters(odds_scale=0.04010094, decay=0.79718902)
+        ages, ACTRParameters(alpha=0.04010094, decay=0.79718902)
     ),
     "P&A": lambda ages: pavlik_anderson_odds(
         ages,
         PavlikAndersonParameters(
-            odds_scale=0.05296011,
+            alpha=0.05296011,
             minimum_decay=0.75811324,
             activation_sensitivity=0.45391362,
         ),
@@ -60,7 +60,7 @@ MODELS = {
     "PPE": lambda ages: ppe_odds(
         ages,
         PPEParameters(
-            odds_scale=0.0180,
+            alpha=0.0180,
             frequency_exponent=0.6178,
             recency_weight=8.6986,
             minimum_decay=0.5358,
@@ -70,7 +70,7 @@ MODELS = {
     "MCM": lambda ages: mcm_odds(
         ages,
         MCMParameters(
-            odds_scale=0.0288,
+            alpha=0.0288,
             time_scale=0.0316,
             time_ratio=1.1112,
             total_weight=0.7041,
@@ -80,7 +80,7 @@ MODELS = {
     "AMPE": lambda ages: ampe_odds(
         ages,
         AMPEParameters(
-            desirability_scale=214.1079,
+            alpha=214.1079,
             decay_scale=1401.1350,
             prior_age=15.1745,
             prior_range=1564.9791,
@@ -103,7 +103,7 @@ def check_closed_form_models() -> None:
 
 def check_ampe_crossover() -> None:
     params = AMPEParameters(
-        desirability_scale=214.1079,
+        alpha=214.1079,
         decay_scale=1401.1350,
         prior_age=15.1745,
         prior_range=1564.9791,
@@ -127,13 +127,13 @@ def check_environment_simulations() -> None:
     fits = {
         "exponential": AndersonMilsonParameters(
             desirability_shape=0.164,
-            desirability_scale=0.139,
+            gamma_scale=0.139,
             mean_decay=0.035,
             mean_revival_interval=333,
         ),
         "power": AndersonMilsonParameters(
             desirability_shape=0.199,
-            desirability_scale=0.482,
+            gamma_scale=0.482,
             mean_decay=4.076,
             mean_revival_interval=800,
         ),

@@ -13,11 +13,10 @@ Keep changes consistent with the scientific and data-provenance constraints belo
 
 ## Modeling boundaries
 
-- State which semantics an analysis uses: `release_compat`, `paper_intended`, or `corrected_common_engine`. A release quirk is not automatically an implementation bug, and a corrected result is not an exact replay.
+- Label a result as either a release comparison or a corrected-equation result. A release quirk is not automatically an implementation bug, and a corrected result is not an exact replay.
 - The behavioral release contains aggregate condition means, not participant responses, trial denominators, or standard errors. Do not invent binomial denominators or participant-level uncertainty.
 - The authors did not release the producer for `Combined.mat/counts225` or the original tokenizer. Rebuilding it from raw event streams is a replication target, not an exact conversion step.
 - Exact stochastic A&M replay is impossible because seeds and parameter-search history were not released. Compare stochastic outputs with declared seeds and uncertainty rather than requiring bit identity.
-- The ten cached Hick micro-window odds and the 32-by-32 environmental surface are distinct targets. Do not infer the missing micro-window construction from the larger surface.
 - Do not run `external/anderson_2023/matlab/temp.m` as part of reproduction; it is an unrelated, extremely heavy matrix-multiplication benchmark.
 
 ## Documentation and verification

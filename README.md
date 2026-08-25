@@ -1,6 +1,6 @@
 # Optimal spacing and memory
 
-This repository studies how the spacing between learning episodes affects later memory. It contains the working manuscript and simulations for a simple spacing model, data recovered from the Cepeda et al. literature, and an audited replication layer for the environmental and behavioral memory models in Anderson et al. (2023).
+This repository studies how the spacing between learning episodes affects later memory. It contains the working manuscript and simulations for a simple spacing model, data recovered from the Cepeda et al. literature, and Python implementations and converted data for the environmental memory models in Anderson et al. (2023).
 
 ## Repository map
 
@@ -9,7 +9,7 @@ This repository studies how the spacing between learning episodes affects later 
 - `src/` contains plotting code, the original R simulation, and independent Python implementations of the Anderson et al. models.
 - `external/anderson_2023/` is an immutable copy of the authors' MATLAB release, with provenance and SHA-256 checksums.
 - `scripts/prepare_anderson_2023_data.py` converts that release into validated, relational CSV tables.
-- `docs/` contains the Anderson et al. model reference, release audit, data dictionary, CSV schemas, and replication plan.
+- `docs/` contains the Anderson et al. model reference, focused implementation notes, data dictionary, CSV schemas, and minimal replication plan.
 - `tests/` contains model, conversion-pipeline, and MATLAB v7.3 reader tests.
 
 ## Clone and retrieve Git LFS files
@@ -62,6 +62,6 @@ For development, the exporter also provides `--skip-corpus`, `--skip-exact-histo
 
 ## Anderson et al. replication notes
 
-The vendored MATLAB directory is a byte-for-byte source snapshot; fixes and adapters belong elsewhere. The independent implementation distinguishes `release_compat`, `paper_intended`, and `corrected_common_engine` semantics. These modes should not be conflated when comparing results.
+The vendored MATLAB directory is a byte-for-byte source snapshot; fixes and adapters belong elsewhere. The Python module implements the corrected equations used for new work and exposes a separate Anderson PPE mapping and A&M release option only where they are needed to understand the released results.
 
-The release does not include participant-level behavioral outcomes, the code that produced `Combined.mat/counts225`, or random seeds and search history for the stochastic A&M fits. Consequently, some targets support exact artifact replay while others require uncertainty-aware replication. The boundaries and acceptance criteria are detailed in the [release audit](docs/anderson_2023_release_audit.md) and [replication plan](docs/anderson_2023_replication_plan.md).
+The release does not include the code that produced `Combined.mat/counts225` or random seeds for the stochastic A&M fits. The directly relevant paper-to-code differences are listed in the [implementation notes](docs/anderson_2023_implementation_notes.md); the next validation steps are deliberately limited in the [replication plan](docs/anderson_2023_replication_plan.md).
