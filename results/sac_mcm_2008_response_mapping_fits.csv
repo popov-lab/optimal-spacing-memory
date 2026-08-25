@@ -1,0 +1,4 @@
+model,parameters,delta,mu,nu,xi,d,tau_days,theta,sigma,rmse_pp
+Deterministic MCM + logistic,6,0.71656,0.06258,33.541417,0.223564,,,0.134705,0.046683,3.523624
+SAC fixed scale + logistic,4,0.613909,,,,0.289428,,0.287548,0.061635,4.978746
+SAC with tau + logistic,5,0.401292,,,,0.136675,0.031804,0.246535,0.026677,4.01994
