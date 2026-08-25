@@ -49,6 +49,8 @@ for p, cfg in panels.items():
         if p == "d":
             by_ri = defaultdict(list)
             for r in prows:
+                if r["function"] != "spacing":
+                    continue
                 by_ri[int(r["ri_days"])].append((r["isi_days"], r["recall_pct"]))
             for ri, pts in sorted(by_ri.items()):
                 x, y = zip(*sorted(pts))

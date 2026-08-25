@@ -9,8 +9,10 @@ predicted with $N=100$ and $\epsilon_r=9$ fixed.
 
 For Cepeda et al. (2008), the published article reports the 26 final spacing
 conditions but does not report the Session-2 first-test forgetting function
-used by Mozer et al. The original parameter-free MCM analysis therefore cannot
-be independently reconstructed from the available published data.
+used by Mozer et al. This analysis was run before that forgetting function was
+recovered from Mozer and Lindsey (2016). The recovered observations are now in
+`data/cepeda_spacing_recall.csv`, but the results below remain the original
+spacing-only analysis and have not been refitted.
 
 As a fallback, we fit one common MCM parameterization directly and jointly to
 all 26 spacing observations across retention intervals of 7, 35, 70, and 350
@@ -46,8 +48,8 @@ This analysis answers a different question from the Cepeda et al. (2009)
 replications:
 
 - **Cepeda et al. (2009):** fit forgetting, freeze parameters, predict spacing.
-- **Cepeda et al. (2008):** forgetting data unavailable, so fit the spacing
-  surface itself.
+- **Cepeda et al. (2008), analysis recorded here:** forgetting data was then
+  unavailable, so the spacing surface itself was fitted.
 
 The 2008 result is therefore useful as a descriptive/post-hoc test of whether a
 single MCM parameterization can capture the four-RI spacing surface, but it must

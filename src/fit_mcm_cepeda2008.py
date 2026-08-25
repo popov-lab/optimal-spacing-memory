@@ -2,9 +2,10 @@
 
 Mozer et al. (2009) fit MCM's four primitive parameters {mu, nu, omega, xi}
 using the single-session forgetting function and then predicted the four spacing
-curves. The published Cepeda et al. (2008) article and recovered dataset do not
-contain that forgetting function, so the original parameter-free procedure
-cannot be reconstructed from the available data.
+curves. The published Cepeda et al. (2008) article did not contain that
+forgetting function. It was later recovered from Mozer and Lindsey (2016) and
+added to the dataset, but this script preserves the earlier spacing-only
+analysis and does not use the newly recovered rows.
 
 This script therefore fits ONE common MCM parameterization jointly to all 26
 published spacing observations across RI = 7, 35, 70, and 350 days. It is a
