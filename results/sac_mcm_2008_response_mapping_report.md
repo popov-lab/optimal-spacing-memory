@@ -935,3 +935,9 @@ Second, SAC already captures the major spacing pattern with only four parameters
 Third, the raw RMSE comparison should not be treated as a formal model-selection result. The MCM fit has six free parameters, SAC with $\tau$ has five, and fixed-scale SAC has four. All parameters in this section were fit directly to the same 26 spacing observations. The purpose of the comparison is narrower: to determine whether the different latent learning architectures can generate the observed spacing geometry when the mapping from latent strength to recall probability is treated consistently across models.
 
 The resulting comparison supports a cleaner theoretical interpretation than a direct strength-to-probability fit. Both models can produce the RI-dependent spacing pattern in latent strength. A threshold-and-noise response layer then maps relatively modest latent-strength differences onto the much larger differences observed in recall probability.
+
+## Time-resolved four-event follow-up
+
+A follow-up analysis replaces the two-study abstraction with the approximate four-event schedule from the experimental procedure and evaluates the general SAC recursion directly. On the same 26 spacing observations, the free-$\delta$ fit has 4.0198 percentage-point RMSE, effectively identical to the 4.0199 percentage-point two-event fit, although the estimated learning rate changes from $\delta=0.4013$ to $\delta=0.2306$. With $\delta=1$, four events reduce RMSE from 4.1321 to 4.0840 percentage points. The timing correction therefore changes the interpretation of $\delta$ more than it changes the fitted spacing curves.
+
+The complete schedule, reproducible fits, diagnostics, point predictions, and figure are in the [time-resolved four-event report](sac_cepeda2008_four_event_report.md).
