@@ -1,19 +1,18 @@
 library(ggplot2)
 library(purrr)
+library(dplyr)
 
-optimal_y_power <- function(x_bar, delta, gamma) {
-  alpha <- delta^(-1 / (gamma + 1))
-  term1 <- x_bar - 1
-  term2 <- alpha * x_bar^(gamma / (1 + gamma)) - 1
-  term1 / term2
+optimal_power <- function(y, delta, d) {
+  denum <- delta^(-1 / (d + 1)) * (1+y)^(d / (1 + d)) - 1
+  y/denum - 1
 }
 
-construct_curves <- function(delta, gamma) {
+construct_curves <- function(y, delta, d) {
   data.frame(
     delta = delta,
-    gamma = gamma,
-    x_bar = test_lag + 1,
-    y_bar = optimal_y_power(test_lag + 1, delta, gamma)
+    d = d,
+    y = y,
+    x = optimal_power(y + 1, delta, d)
   )
 }
 
@@ -22,34 +21,25 @@ MAX_DELAY <- 1000 * SECONDS_PER_DAY
 MIN_DELAY <- 1
 test_lag <- 10^seq(log10(MIN_DELAY), log10(MAX_DELAY), length = 1000)
 
-conditions <- expand.grid(delta = c(0.25, 0.5, 0.8, 1), gamma = c(0.01, 0.25, 0.5, 0.8))
-curves_data <- pmap(conditions, construct_curves) |> dplyr::bind_rows()
+conditions <- expand.grid(delta = c(0.25, 0.5, 0.8, 1), d = c(0.01, 0.25, 0.5, 0.8))
+curves_data <- pmap(conditions, \(delta, d) construct_curves(test_lag, delta, d)) |> dplyr::bind_rows()
 
-f1 <- curves_data |>
-  ggplot(aes(x_bar / SECONDS_PER_DAY, y_bar / SECONDS_PER_DAY, color = as.factor(delta))) +
+breaks <- c(0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000)
+
+curves_data |> 
+  filter(y > 1/delta - 1)  |> 
+  ggplot(aes(y / SECONDS_PER_DAY, x / SECONDS_PER_DAY, color = as.factor(delta))) +
   geom_line() +
-  facet_wrap(~gamma, scales = "free") +
-  scale_x_continuous(name = "Test delay (days + 1 second offset)", expand = c(0, 0)) +
-  scale_y_continuous(name = "Study gap (days + 1 second offset)", expand = c(0, 0)) +
-  ggtitle("Panels: decay rate (gamma)") +
-  scale_color_discrete("Learning rate (delta)") +
-  theme(legend.position = "bottom")
-
-breaks <- c(0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000)
-
-f2 <- curves_data |>
-  ggplot(aes(x_bar / SECONDS_PER_DAY, (y_bar) / SECONDS_PER_DAY, color = as.factor(delta))) +
-  geom_line() +
-  scale_x_log10(name = "Test delay (days + 1 second offset)", breaks = breaks, labels = breaks) +
-  scale_y_log10(name = "Study gap (days + 1 second offset)", breaks = breaks, labels = breaks) +
+  scale_x_log10(name = "Test delay (days)", breaks = breaks, labels = breaks) +
+  scale_y_log10(name = "Study gap (days)", breaks = breaks, labels = breaks) +
   geom_hline(yintercept = 1) +
   geom_vline(xintercept = 1) +
-  ggtitle("Panels: decay rate (gamma)") +
+  ggtitle("Panels: decay rate (d)") +
   scale_color_discrete("Learning rate (delta)") +
-  facet_wrap(~gamma, scales = "free") +
+  facet_wrap(~d, scales = "free") +
   theme(legend.position = "bottom")
 
-
-ggsave("figures/f1_spacing_parameters_linear.png", f1, width = 8, height = 8)
 ggsave("figures/f2_spacing_parameters_log_log.png", f2, width = 8, height = 8)
+
+
 
