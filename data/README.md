@@ -3,11 +3,11 @@
 ## Contents
 
 - `cepeda2006_optimal_gaps.csv` — one row per experiment: the test delay (retention interval) and the observed optimal gap (interstudy interval), both in days. Plotted by `src/plot_optimal_gaps.py` → `figures/optimal_gap_by_test_delay.png`.
-- `cepeda_spacing_recall.csv` — one row per recall observation: the forgetting and spacing functions of Cepeda et al. (2009) Experiments 1, 2a, and 2b, and the spacing functions of the four retention-interval conditions of Cepeda et al. (2008). Plotted by `src/plot_spacing_recall.py` → `figures/spacing_recall_{a,b,c,d}.png` (linear x axis) and `figures/spacing_recall_{a,b,c,d}_log.png` (logarithmic x spacing; linear below ISI = 1 day so the massed condition stays on the axis).
+- `cepeda_spacing_recall.csv` — one row per recall observation: the forgetting and spacing functions of Cepeda et al. (2009) Experiments 1, 2a, and 2b; the single-session forgetting function of Cepeda et al. (2008); and that study's spacing functions at four retention intervals. Plotted by `src/plot_spacing_recall.py` → `figures/spacing_recall_{a,b,c,d}.png` (linear x axis) and `figures/spacing_recall_{a,b,c,d}_log.png` (logarithmic x spacing; linear below ISI = 1 day so the massed condition stays on the axis). The panel-d plots continue to show the spacing functions only.
 
 `cepeda2006_optimal_gaps.csv` was recovered directly from the embedded vector graphics of the Mozer et al. (2009) proceedings PDF — i.e., it holds the exact plotted coordinates, not raster digitizations. Marker centers were decomposed from the figure's drawing commands and calibrated against the axes (calibration residuals < 0.03 units), leaving only PDF coordinate-rounding noise. Where the recovered values coincide with round units (integers, round day counts) the round values are reported; the remaining values are reported to one decimal.
 
-`cepeda_spacing_recall.csv` is read from the original Cepeda papers; its provenance is described in its own section below. An earlier version of this dataset, taken from Figure 2 of Mozer et al. (2009), is kept in `archive/` together with the figures made from it; `archive/README.md` records why it was retired.
+Most of `cepeda_spacing_recall.csv` is read from the original Cepeda papers. The panel-d forgetting function, which those papers and Mozer et al. (2009) did not report, is recovered from Mozer and Lindsey (2016). Its provenance is described in its own section below. An earlier version of the spacing data, taken from Figure 2 of Mozer et al. (2009), is kept in `archive/` together with the figures made from it; `archive/README.md` records why it was retired.
 
 ## `cepeda2006_optimal_gaps.csv`
 
@@ -40,7 +40,7 @@ One recall percentage per row, from the two studies. In each experiment, subject
 - **Spacing function** — recall on the final test, as a function of ISI at fixed RI.
 - **Forgetting function** — recall at the start of the second session, i.e., after a single study exposure; the study–test lag of that measurement is the ISI itself, so `ri_days` is left empty for these rows.
 
-Panels a–c are Cepeda et al. (2009) Experiment 1 (Swahili–English word pairs, RI = 10 days), Experiment 2a (obscure facts, RI = 168 days), and Experiment 2b (object names, RI = 168 days). Panel d is Cepeda et al. (2008): all 26 gap × RI conditions of the study (RIs 7, 35, 70, and 350 days), spacing functions only. The panel letters are retained from the earlier version of this dataset so that the two are directly comparable.
+Panels a–c are Cepeda et al. (2009) Experiment 1 (Swahili–English word pairs, RI = 10 days), Experiment 2a (obscure facts, RI = 168 days), and Experiment 2b (object names, RI = 168 days). Panel d is Cepeda et al. (2008): the single-session forgetting function at 11 lags and all 26 gap × RI conditions of the study (RIs 7, 35, 70, and 350 days). The panel letters are retained from the earlier version of this dataset so that the two are directly comparable.
 
 ### Provenance
 
@@ -50,7 +50,9 @@ The two studies are read from different sources, because their own figures diffe
 
 Two caveats. At ISI = 2 days in Experiment 1 the forgetting and spacing markers coincide, so the forgetting value (68.9) is the centre of the merged pair and is uncertain by about ±0.5. At ISI = 0 and 1 day in Experiment 2 the markers of adjacent conditions overlap; they were separated by their individual edges.
 
-**Cepeda et al. (2008) — panel d.** *Not* read from that paper's own figure. Its Figure 3a plots the massed and 1-day conditions with a horizontal jitter that is not applied to the error bars, overlaps several markers, and draws the series as cubic splines, so marker centres there cannot be located reliably. Instead each condition is the mean of three independent published replots of the same study:
+**Cepeda et al. (2008) — panel-d forgetting function.** The original article and Mozer et al. (2009) do not report these single-session observations. They were recovered from the left panel of Figure 2 on printed page 4 of Mozer and Lindsey (2016). The figure is embedded as vector art: the 11 open-circle centers were read from its drawing commands and calibrated against the 0–100% recall axis and the 0–105-day lag axis. PDF coordinate noise is below 0.05 percentage points, so values are reported to one decimal. The solid power-law fit was excluded. Only the left panel was used; the right-panel spacing values were neither extracted nor compared.
+
+**Cepeda et al. (2008) — panel-d spacing functions.** *Not* read from that paper's own figure. Its Figure 3a plots the massed and 1-day conditions with a horizontal jitter that is not applied to the error bars, overlaps several markers, and draws the series as cubic splines, so marker centres there cannot be located reliably. Instead each condition is the mean of three independent published replots of the same study:
 
 > Carpenter, S. K., Cepeda, N. J., Rohrer, D., Kang, S. H. K., & Pashler, H. (2012). Figure 3. Toppino, T. C., & Gerbier, E. (2014). Figure 4.4. Carpenter, S. K. (2020). Figure 2.
 
@@ -85,6 +87,8 @@ Each was digitized independently at native raster resolution with its own axis c
 > Cepeda, N. J., Coburn, N., Rohrer, D., Wixted, J. T., Mozer, M. C., & Pashler, H. (2009). Optimizing distributed practice: theoretical analysis and practical implications. *Experimental Psychology*, *56*(4), 236–246. https://doi.org/10.1027/1618-3169.56.4.236
 
 > Mozer, M. C., Pashler, H., Cepeda, N. J., Lindsey, R. V., & Vul, E. (2009). Predicting the optimal spacing of study: A multiscale context model of memory. In *Advances in Neural Information Processing Systems 22* (pp. 1321–1329).
+
+> Mozer, M. C., & Lindsey, R. V. (2016). Predicting and improving memory retention: Psychological theory matters in the big data era.
 
 > Carpenter, S. K., Cepeda, N. J., Rohrer, D., Kang, S. H. K., & Pashler, H. (2012). Using spacing to enhance diverse forms of learning: Review of recent research and implications for instruction. *Educational Psychology Review*, *24*(3), 369–378. https://doi.org/10.1007/s10648-012-9205-z
 
