@@ -1,0 +1,19 @@
+panel,experiment,material,isi_days,ri_days,observed_recall,predicted_recall,residual
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,0,10,0.550000,0.366442,-0.183558
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,1,10,0.740000,0.785321,0.045321
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,2,10,0.690000,0.795738,0.105738
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,4,10,0.680000,0.732242,0.052242
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,7,10,0.690000,0.681872,-0.008128
+a,"Cepeda et al. (2009), Experiment 1",Swahili-English word pairs,14,10,0.650000,0.625544,-0.024456
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,0,168,0.260000,0.230414,-0.029586
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,1,168,0.330000,0.288731,-0.041269
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,7,168,0.470000,0.540116,0.070116
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,28,168,0.560000,0.636213,0.076213
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,84,168,0.430000,0.526531,0.096531
+b,"Cepeda et al. (2009), Experiment 2a",obscure facts,168,168,0.450000,0.484190,0.034190
+c,"Cepeda et al. (2009), Experiment 2b",object names,0,168,0.080000,0.056986,-0.023014
+c,"Cepeda et al. (2009), Experiment 2b",object names,1,168,0.090000,0.089060,-0.000940
+c,"Cepeda et al. (2009), Experiment 2b",object names,7,168,0.140000,0.171742,0.031742
+c,"Cepeda et al. (2009), Experiment 2b",object names,28,168,0.260000,0.166688,-0.093312
+c,"Cepeda et al. (2009), Experiment 2b",object names,84,168,0.190000,0.122894,-0.067106
+c,"Cepeda et al. (2009), Experiment 2b",object names,168,168,0.170000,0.097218,-0.072782

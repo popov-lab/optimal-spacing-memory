@@ -1,0 +1,2 @@
+experiment,fit_target,mu,nu,omega,xi,epsilon_r,n,spacing_sse,spacing_rmse
+Cepeda et al. (2008),"26 spacing observations jointly across RI = 7, 35, 70, 350 days",23.69073351,1.07361044,0.80667706,0.93531432,9,100,0.0606651541701,0.048303987003
