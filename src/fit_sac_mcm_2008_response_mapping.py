@@ -27,6 +27,9 @@ FIGURES = ROOT / "figures"
 
 N = 100
 ZERO_GAP_DAYS = 0.00256
+PLOT_XLIM = (-5.25, 110.25)
+PLOT_XTICKS = [0, 7, 14, 21, 35, 70, 105]
+CACHE_BUST_TAG = "layoutfix_20260825"
 
 
 def read_data():
@@ -199,8 +202,16 @@ def fit_sac(model_isi, ri, observed, with_tau, starts=96, seed=20260826):
     return p
 
 
-def plot_fit(rows, model_name, strength_fn, params, outfile):
-    plt.figure(figsize=(7.4, 5.2))
+def plot_fit(rows, model_name, strength_fn, params, outstem):
+    # A dedicated legend panel guarantees that the legend cannot cover data.
+    # Symmetric five-percent padding keeps markers at both 0 and 105 days
+    # completely inside the linear plotting area.
+    fig = plt.figure(figsize=(10.2, 5.4), layout="constrained")
+    grid = fig.add_gridspec(1, 2, width_ratios=(4.8, 2.0))
+    ax = fig.add_subplot(grid[0, 0])
+    legend_ax = fig.add_subplot(grid[0, 1])
+    legend_ax.set_axis_off()
+
     for RI in [7, 35, 70, 350]:
         condition = [r for r in rows if float(r["ri_days"]) == RI]
         condition.sort(key=lambda r: float(r["isi_days"]))
@@ -214,19 +225,29 @@ def plot_fit(rows, model_name, strength_fn, params, outfile):
         strength = strength_fn(xmodel, rig, params)
         prediction = logistic_response(strength, params["theta"], params["sigma"])
 
-        line, = plt.plot(xgrid, 100 * prediction, label=f"Fit, RI={RI} d")
-        plt.plot(xobs, yobs, "o", color=line.get_color(), label=f"Data, RI={RI} d")
+        line, = ax.plot(xgrid, 100 * prediction, label=f"Fit, RI={RI} d")
+        ax.plot(xobs, yobs, "o", color=line.get_color(), label=f"Data, RI={RI} d")
 
-    plt.xlim(0, 105)
-    plt.ylim(0, 100)
-    plt.xticks([0, 7, 14, 21, 35, 70, 105])
-    plt.xlabel("ISI (days)")
-    plt.ylabel("Final-test recall (%)")
-    plt.title(model_name)
-    plt.legend(fontsize=8, ncol=2)
-    plt.tight_layout()
-    plt.savefig(outfile)
-    plt.close()
+    ax.set_xlim(*PLOT_XLIM)
+    ax.set_ylim(0, 100)
+    ax.set_xticks(PLOT_XTICKS)
+    ax.set_xlabel("ISI (days)")
+    ax.set_ylabel("Final-test recall (%)")
+    ax.set_title(model_name)
+
+    handles, labels = ax.get_legend_handles_labels()
+    legend_ax.legend(
+        handles,
+        labels,
+        loc="upper left",
+        borderaxespad=0,
+        fontsize=8,
+        ncol=1,
+    )
+
+    for suffix in (".svg", ".png"):
+        fig.savefig(outstem.with_suffix(suffix), dpi=180)
+    plt.close(fig)
 
 
 def main():
@@ -270,21 +291,21 @@ def main():
         "single bounded gain at all study events",
         lambda a, b, p: mcm_strength(a, b, p["mu"], p["nu"], p["xi"], p["delta"]),
         mcm,
-        FIGURES / "mcm_2008_logistic_linear.svg",
+        FIGURES / f"mcm_2008_logistic_linear_{CACHE_BUST_TAG}",
     )
     plot_fit(
         rows,
         "Cepeda et al. (2008): SAC + logistic response\n" + r"$f(t)=(1+t)^{-d}$",
         lambda a, b, p: sac_strength(a, b, p["delta"], p["d"], None),
         sac_fixed,
-        FIGURES / "sac_2008_logistic_fixed_scale_linear.svg",
+        FIGURES / f"sac_2008_logistic_fixed_scale_linear_{CACHE_BUST_TAG}",
     )
     plot_fit(
         rows,
         "Cepeda et al. (2008): SAC + logistic response\n" + r"$f(t)=(1+t/\tau)^{-d}$",
         lambda a, b, p: sac_strength(a, b, p["delta"], p["d"], p["tau"]),
         sac_tau,
-        FIGURES / "sac_2008_logistic_tau_linear.svg",
+        FIGURES / f"sac_2008_logistic_tau_linear_{CACHE_BUST_TAG}",
     )
 
 

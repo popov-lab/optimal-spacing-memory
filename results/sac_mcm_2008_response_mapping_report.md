@@ -822,7 +822,7 @@ $$
 \boxed{3.52\text{ percentage points}.}
 $$
 
-![Deterministic MCM with logistic response mapping](../figures/mcm_2008_logistic_linear.svg)
+![Deterministic MCM with logistic response mapping](../figures/mcm_2008_logistic_linear_layoutfix_20260825.svg)
 
 ## SAC with the original fixed time scale
 
@@ -872,7 +872,7 @@ $$
 \boxed{4.98\text{ percentage points}.}
 $$
 
-![SAC with fixed-scale power forgetting and logistic response mapping](../figures/sac_2008_logistic_fixed_scale_linear.svg)
+![SAC with fixed-scale power forgetting and logistic response mapping](../figures/sac_2008_logistic_fixed_scale_linear_layoutfix_20260825.svg)
 
 ## SAC with an explicit forgetting time scale
 
@@ -916,7 +916,7 @@ $$
 \boxed{4.02\text{ percentage points}.}
 $$
 
-![SAC with fitted forgetting time scale and logistic response mapping](../figures/sac_2008_logistic_tau_linear.svg)
+![SAC with fitted forgetting time scale and logistic response mapping](../figures/sac_2008_logistic_tau_linear_layoutfix_20260825.svg)
 
 ## Comparison
 
