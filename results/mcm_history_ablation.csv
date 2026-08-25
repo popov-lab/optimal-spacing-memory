@@ -1,0 +1,25 @@
+dataset,panel,variant,rmse_pp
+Cepeda 2009 prediction,a,full stochastic,9.158012
+Cepeda 2009 prediction,a,no retrieval branching,21.060737
+Cepeda 2009 prediction,a,no encoding branching,8.855539
+Cepeda 2009 prediction,a,no branching,27.180824
+Cepeda 2009 prediction,b,full stochastic,6.296861
+Cepeda 2009 prediction,b,no retrieval branching,18.347786
+Cepeda 2009 prediction,b,no encoding branching,8.100408
+Cepeda 2009 prediction,b,no branching,19.316296
+Cepeda 2009 prediction,c,full stochastic,5.780082
+Cepeda 2009 prediction,c,no retrieval branching,5.780082
+Cepeda 2009 prediction,c,no encoding branching,5.870158
+Cepeda 2009 prediction,c,no branching,5.870158
+Cepeda 2009 prediction,pooled,full stochastic,7.232542
+Cepeda 2009 prediction,pooled,no retrieval branching,16.468204
+Cepeda 2009 prediction,pooled,no encoding branching,7.713536
+Cepeda 2009 prediction,pooled,no branching,19.548020
+Cepeda 2008 direct fit,all 26,full stochastic,4.657912
+Cepeda 2008 direct fit,all 26,no retrieval branching,6.573130
+Cepeda 2008 direct fit,all 26,no encoding branching,5.087156
+Cepeda 2008 direct fit,all 26,no branching,4.934692
+Cepeda 2009 hard ablation,pooled,full stochastic,7.232542
+Cepeda 2009 hard ablation,pooled,no retrieval-dependent update (epsilon=1),16.539868
+Cepeda 2009 hard ablation,pooled,always encode (omega=1; forgetting refit),9.950954
+Cepeda 2009 hard ablation,pooled,both hard removals,17.084468
