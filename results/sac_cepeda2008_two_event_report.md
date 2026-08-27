@@ -48,6 +48,34 @@ The joint fit is the direct test of whether one parameterization can reconcile t
 
 For comparison, the preceding two-event spacing-only model used one common $\delta$ at both studies and obtained 4.02 pp spacing RMSE. Fixing the first increment to one and estimating only $\delta_2$ changes that value to 3.11 pp.
 
+## Why the spacing optimum is preserved
+
+With one common learning rate at both sessions, the earlier two-event strength was
+
+$$
+B_{\mathrm{old}}(a,b)=\delta\{f(a+b)+f(b)-\delta f(a)f(b)\}.
+$$
+
+The leading $\delta$ is a global multiplicative scale. Under the fitted logistic response mapping it is absorbed exactly by replacing $\theta$ and $\sigma$ with $\theta/\delta$ and $\sigma/\delta$. The consequential old strength is therefore
+
+$$
+\widetilde B_{\mathrm{old}}(a,b)=f(a+b)+f(b)-\delta f(a)f(b).
+$$
+
+The present session-specific model instead gives
+
+$$
+B_{\mathrm{new}}(a,b)=f(a+b)+\delta f(b)-\delta f(a)f(b).
+$$
+
+For fixed $b$, the change is the $a$-independent offset $(\delta-1)f(b)$. Both models therefore have exactly the same derivative with respect to the ISI:
+
+$$
+\frac{dB}{da}=\left.\frac{df(t)}{dt}\right|_{t=a+b}-\delta\left.\frac{df(t)}{dt}\right|_{t=a}f(b),
+$$
+
+and therefore the same optimum condition. What changes is the tail level: as $a\to\infty$, the old normalized strength approaches $f(b)$ whereas the new strength approaches $\delta f(b)$. The second session supplies less asymptotic strength without moving the raw-strength optimum. Because the offset depends on $b$, a response mapping shared across RI conditions cannot absorb it globally.
+
 ## Interpretation
 
 The session-specific learning rates improve the descriptive spacing-only fit by 0.91 percentage points relative to the preceding common-$\delta$ two-event fit. They do not reconcile the two datasets: imposing the forgetting observations raises spacing RMSE from 3.11 to 4.57 pp, while the spacing-only solution misses the forgetting curve by 18.28 pp.
